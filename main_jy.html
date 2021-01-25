@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="js/mui.min.js"></script>
+		<script src="js/api.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/iconfont.css" />
+		<style type="text/css">
+			.mui-content {
+				margin-top: 2px;
+			}
+			.badge{
+				position: absolute;
+				top:0;
+				right: 0;
+				z-index: 99;
+			}
+		</style>
+	</head>
+	<body>
+ 		<!-- <header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">PMS</h1>
+		</header> -->
+		<div class="mui-content">
+			<div class="mui-slider">
+			  <div class="mui-slider-group">
+				<div class="mui-slider-item"><a href="#"><img src="img/bg1.jpg" /></a></div>
+				<div class="mui-slider-item"><a href="#"><img src="img/bg2.jpg" /></a></div>
+				<div class="mui-slider-item"><a href="#"><img src="img/bg3.jpg" /></a></div>
+			  </div>
+			</div>
+			<ul class="mui-table-view mui-grid-view mui-grid-9" id="list" >
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="web/IQC_coming_list.html" >
+						<span class="mui-icon iconfont icon-eps-jianyanjieguo" style="color:#CD8500"></span>
+						<div class="mui-media-body">IQC来料报检</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="web/IQC_regular_list.html" >
+						<span class="mui-icon iconfont icon-chaxun" style="color:#1296db"></span>
+						<div class="mui-media-body">IQC定期查询</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="web/IQC_regular.html" >
+						<span class="mui-icon iconfont icon-meizhoudingjian" style="color:#FF7F00"></span>
+						<div class="mui-media-body">IQC定期检验</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="web/IQC_check.html" >
+						<!-- <div class="badge" ><span class=" mui-badge mui-badge-danger badge" id="iqc_badge">45</span></div> -->
+						<span class="mui-icon iconfont icon-zhijian " style="color: #FF8C00;"></span>
+						<div class="mui-media-body">IQC检验录入</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="web/IQC_free.html" >
+						<span class="mui-icon iconfont icon-mianjianhege" style="color:#FF7F00"></span>
+						<div class="mui-media-body">IQC半年免检</div>
+					</a>
+				</li>
+				
+				<!-- <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="web/IPQC_check.html" >
+						<span class="mui-icon iconfont icon-bianzu" style="color:#15aa0d"></span>
+						<div class="mui-media-body">IPQC检验录入</div>
+					</a>
+				</li> -->
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="web/IPQC_first_check.html" >
+						<span class="mui-icon iconfont icon-shoujianjianyandengji" style="color:#15aa0d"></span>
+						<div class="mui-media-body">IPQC首件录入</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="" >
+						<span class="mui-icon iconfont icon-pinzhi" style="color:#FFCC00"></span>
+						<div class="mui-media-body">FQC检验录入</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="" >
+						<span class="mui-icon iconfont icon-yanhuo" style="color:#999966"></span>
+						<div class="mui-media-body">FQA检验录入</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="web/NG_check.html" >
+						<span class="mui-icon iconfont icon-icon-wuliaobuliangpinbaogao" style="color:#de1312"></span>
+						<div class="mui-media-body">不良品录入</div>
+					</a>
+				</li>
+				<!-- <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="web/Repair_check.html" >
+						<span class="mui-icon iconfont icon-weixiu" style="color:#2E8B57"></span>
+						<div class="mui-media-body">维修结果录入</div>
+					</a>
+				</li> -->
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="web/Repair_check_new.html" >
+						<span class="mui-icon iconfont icon-weixiu" style="color:#2E8B57"></span>
+						<div class="mui-media-body">维修结果录入</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="web/DJ_check.html" >
+						<span class="mui-icon iconfont icon--" style="color:#0099CC"></span>
+						<div class="mui-media-body">点检录入</div>
+					</a>
+				</li>
+				
+				
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4 bg1">
+					<a href="login.html" id="login">
+						<span class="mui-icon iconfont icon-tuichu" style="color:#de1312"></span>
+						<div class="mui-media-body">退出登录</div>
+					</a>
+				</li>
+				<!-- 				            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4">
+				            	<a href="repair.html" id="dianbiao" open-type="common">
+				                    <span class="mui-icon iconfont icon-kuaixiu" style="color: #e3007f;"></span>
+				                    <div class="mui-media-body">抢修录入</div>
+				            	</a>
+				            </li>
+				            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4">
+				            	<a href="dxrepair.html" id="fazhi" open-type="common">
+				                    <span class="mui-icon iconfont icon-dinxiu" style="color:#2e85cf"></span>
+				                    <div class="mui-media-body">定修录入</div>
+				            	</a>
+				            </li>
+				            <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-4">
+				            	<a href="inspect.html" id="dianliang" open-type="common">
+				                    <span class="mui-icon iconfont icon-zhibanguanli" style="color: #eeb21c;"></span>
+				                    <div class="mui-media-body">值班巡检</div>
+				            	</a>
+				            </li>	 -->
+
+			</ul>
+		</div>
+		<script type="text/javascript" charset="utf-8">
+			// mui.init({
+			// 	beforeback: function() { //监听物理返回按键的方法
+			// 	return false;
+			// 	}
+			// });
+			// 重写移动端返回键 
+			var first = null;
+			mui.back = function(){
+			mui.plusReady(function() {
+			//首页返回键处理
+			//处理逻辑：1秒内，连续两次按返回键，则退出应用；
+			if(!first){
+			first = new Date().getTime();
+			mui.toast('再按一次退出登录');
+			setTimeout(function(){
+			first = null;
+			},1000);
+			}else{
+			if(new Date().getTime()-first<1000){
+			plus.runtime.restart();
+			}
+			}
+			});
+			}
+			mui.plusReady(function() {
+				var gallery = mui('.mui-slider');
+				gallery.slider({
+				  interval:5000//自动轮播周期，若为0则不自动播放，默认为0；
+				});
+				
+				//document.getElementById('iqc_badge').innerHTML = '';
+			})
+			mui("#list").on("tap", "a", function() {
+				var id = this.getAttribute('href');
+				var href = this.href;
+				if(id == 'login'){
+					plus.runtime.restart();
+				}
+				mui.openWindow({
+					id: id,
+					url: this.href,
+					styles: {
+						top: '0px', //新页面顶部位置 
+						bottom: '0px', //新页面底部位置 
+						//width: newpage - width, //新页面宽度，默认为100% 
+						//height: newpage - height, //新页面高度，默认为100% ...... 
+					},
+					extras: {
+						//自定义扩展参数，可以用来处理页面间传值 
+					},
+					show: { //控制打开页面的类型
+						autoShow: true,
+						//页面loaded事件发生后自动显示，默认为true 
+						aniShow: 'slide-in-right', //页面显示动画，默认为”slide-in-right“；  页面出现的方式 左右上下
+						duration: '100' //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒； 
+					},
+					waiting: { // 控制 弹出转圈框的信息
+						autoShow: true, //自动显示等待框，默认为true 
+						title: '加载中', //等待对话框上显示的提示内容 
+						options: {
+							width: '300px', //等待框背景区域宽度，默认根据内容自动计算合适宽度 
+							height: '100px', //等待框背景区域高度，默认根据内容自动计算合适高度 ...... 
+						}
+					}
+				});
+
+			})
+		</script>
+	</body>
+</html>

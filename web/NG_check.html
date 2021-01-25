@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<script src="js/NG_check.js"></script>
+		<style type="text/css">
+			.mui-content {
+				margin-top: 2px;
+			}
+			/*标题中图标居右侧的css样式*/
+			.title-right {
+				float: right;
+				line-height: 44px !important;
+				position: absolute;
+				display: block;
+				width: 100%;
+				margin: 0 0px !important;
+				padding: 0 !important;
+				text-align: center;
+				white-space: nowrap;
+				color: #000;
+				display: inline-block;
+				overflow: hidden;
+				width: auto;
+				margin: 0;
+				text-overflow: ellipsis;
+				--color: #de1312;
+			}
+			
+			 .product{
+            margin-top: 4.375rem;  
+        }
+        .productBox {
+            background-color: #fff;
+			width: 100%;
+			/* position:fixed; */
+        }
+        .productConten {
+            margin-bottom: 1rem;
+        }
+		.productConten .mui-input-group{
+			padding:0.125rem;
+		}
+        .product-delcom {
+            padding: 0.24rem 3%;
+             color: #323232; 
+             /* font-size:0.625rem; */
+            /* border-bottom: 1px solid #EEEEEE;  */
+        }
+        .type{
+            width: 100%;
+           /* height: 4.0625rem; */
+            border-bottom: 1px solid #EEEEEE;
+            align-items: center;
+            display: flex;
+        }
+        .noodles{
+            display: inline-block;
+            padding: 0.125rem;
+            border:1px rgb(255, 145, 0) dashed;
+            margin: 0.3125rem;
+        }
+		.ncheck{
+			background:#FFA54F;
+		}
+		.ndis{
+			display:none;
+		}
+        
+        .clearfix:after {
+            display: block;
+            overflow: hidden;
+            clear: both;
+            height: 0;
+            visibility: hidden;
+            content: "";
+        }
+        .product-img{
+            float:left;
+            width: 30%;
+        }
+        .product-text{
+            float:left;
+            width: 70%;
+        }
+        .type-left{
+            float:left;
+        }
+        .type-right{
+            float: right;
+            width: 120px;
+        }
+
+        .product-footer {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex: 1;
+            -webkit-box-flex: 1;
+            flex: 1;
+            line-height: 1rem;
+            text-align: center;
+        }
+
+        .product-footer a {
+            border-radius: 5px;
+            -webkit-flex: 1;
+            -webkit-box-flex: 1;
+            flex: 1;
+            color: #fff;
+            text-decoration: none;
+            background-color: rgb(255, 145, 0);
+            padding: 5px;
+            margin: 10px 20px;
+        }
+		.font-seal{
+			font-size: 10px;z-index: 2;position: absolute;right:14px;top: 15px;    border: 1px solid #F73A3C;
+			transform: rotate(25deg);width: 43px;line-height: 20px;text-align: center;
+			color: #F73A3C;font-weight: bold;
+		}
+
+		</style>
+	</head>
+	<body class="mui-fullscreen">
+		<header class="mui-bar mui-bar-nav">
+			<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+				<span class="mui-icon mui-icon-left-nav"></span>
+			</button>
+			<h1 class="mui-title">不良品录入</h1>
+			<span class="title-right mui-icon mui-icon-list" style="color:#0062CC" id="moreId"></span>
+		</header>
+		<div class="mui-content" id="contentId">
+			<div class="mui-input-group">
+				<div class="mui-input-row">
+					<label onclick="clicked('commom/saomiao.html','saomiao',true);"><span class="mui-icon iconfont icon-saomiao" id="num1"></span>扫描</label>
+					<input type="text" class="mui-input-clear" placeholder="请输入条码/批次号" id='barcode'>
+				</div>
+			</div>
+			<div class="productBox">
+				<div class="productConten">
+			        <div class="product-delcom">
+			            <div class="type" >
+			                <p>站&ensp;&ensp;&ensp;&ensp;别</p>
+							<div class="mui-row">
+							    <div class="mui-col-sm-12 mui-col-xs-12" id="statDiv">
+								</div>
+							</div>
+			                <!-- <span class="noodles">外层</span> <span class="rice">图电</span><span class="rice">蚀刻</span> -->
+			            </div>
+						<div class="type clearfix">
+						    <p>不良分类</p>
+							<div class="mui-row">
+							    <div class="mui-col-sm-12 mui-col-xs-12" id="ngtypeDiv">
+								</div>
+							</div>
+						</div>
+						<div class="type clearfix">
+						    <p>不良项目</p>
+							<div class="mui-row">
+							    <div class="mui-col-sm-12 mui-col-xs-12" id="ngcodeDiv">
+								</div>
+							</div>
+						</div>
+						<div class="type clearfix">
+						    <p>处理方式</p>
+							<div class="mui-row">
+							    <div class="mui-col-sm-12 mui-col-xs-12" id="dealDiv">
+									<span class="noodles ncheck" data-code='修理'>修理</span>
+									<span class="noodles" data-code='报废'>报废</span>
+									<span class="noodles" data-code='特采'>特采</span>
+								</div>
+							</div>
+						</div>
+			        </div>
+					<form class="mui-input-group" id="formId">
+						<div class="mui-input-row" >
+							<label >备注/说明:</label>
+							<textarea  class="form" rows="5" id="des"></textarea>
+						</div>
+						<div class="mui-input-row">
+							<label>不良数量:</label>
+							<!-- <input type="text" class="mui-input-clear" value="1" > -->
+							<div id="qty" class="mui-numbox" style="width: 12.5rem;" data-numbox-step='1' data-numbox-min='1' >
+								<button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+								<input class="mui-input-numbox" type="number" />
+								<button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+							</div>
+						</div>
+					</form>
+					
+			    </div>
+			    <div class="product-footer">
+			        <a href="javascript:" id="submitBtn">保存</a>
+			    </div>
+		</div>
+		<div class="mui-scroll">
+		<ul class="mui-table-view" id="ul">
+	</ul>
+	</div>
+</div>
+
+		<script id='stat-template' type="text/template">
+			<% for(var i in record){ var item=record[i]; %>
+			   <label class="noodles" data-code='<%=(item.FCODE)%>' data-name='<%=(item.FNAME)%>'><%=(item.FNAME)%></label>
+			<% } %>
+		</script>
+		<script id='li-template' type="text/template">
+			<% for(var i in record){ var item=record[i]; %>
+			   <li class="mui-table-view-cell mui-media">
+			   	<a href="javascript:;">
+				{{if item.deal == '修理'}}
+				<div class="font-seal" style="color: #336699;border: 1px solid #336699"><%=item.deal%></div>
+				{{else}}
+				<div class="font-seal" style="color: #FF6666;border: 1px solid #FF6666"><%=item.deal%></div>
+				{{/if}}
+				{{if item.mode == '按条码'}}
+				<span class="mui-media-object mui-pull-left mui-icon iconfont icon-tiaoma" style="color: #666699;font-size:1.5625rem"></span>
+				{{else}}
+				<span class="mui-media-object mui-pull-left mui-icon iconfont icon-pici" style="color: #CC9999;font-size:1.875rem"></span>
+				{{/if}}
+			   		
+			   		<div class="mui-media-body">
+			   			<span class="mui-badge mui-badge-success"><%=(item.qty)%></span>
+			   			<%=(item.barcode)%>
+			   			<p class='mui-ellipsis'><%=(item.stat)%>-><%=(item.ngtype)%>-><%=(item.ngcode)%></p>
+			   		</div>
+			   	</a>
+			   	
+			   </li>
+			<% } %>
+		</script>
+
+		<script type="text/javascript" charset="utf-8">
+			var stat='';var ngtype='';var ngcode='';var ngcodeName="";var deal='修理';
+			var stat_name='';
+			mui.init({ 
+				 pullRefresh : {
+				　　 swipeBack: false, //关闭左滑关闭功能
+					container:"#contentId",//下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+					down : {
+					  style:'circle',//必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+					  color:'#2BD009', //可选，默认“#2BD009” 下拉刷新控件颜色
+					  height:'50px',//可选,默认50px.下拉刷新控件的高度,
+					  range:'100px', //可选 默认100px,控件可下拉拖拽的范围
+					  offset:'0px', //可选 默认0px,下拉刷新控件的起始位置
+					  auto: false,//可选,默认false.首次加载自动上拉刷新一次
+					  contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                      contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                      contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+					  callback :getStatList //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+				   },
+				// 　　up:{
+				// 　　　　contentrefresh: '正在加载...',
+				// 　　　　contentnomore:'没有更多数据了',
+				// 　　　　callback:pulluploading //上拉加载下一页
+				// 　　},
+				}
+				});
+			mui.plusReady(function() {
+				//提交
+				document.getElementById('submitBtn').addEventListener('tap', function(event) {
+					doSubmit();
+				});
+				//getStatList();
+				addStatTap();
+				//addModeTap();//统计方式
+				addNgtypeTap();//不良分类
+				addNgcodeTap();//不良项目
+				addDealTap();//处理方式
+				
+				//输入法软键盘的搜索
+				document.getElementById("barcode").addEventListener("keydown", function(e) {
+					if (13 == e.keyCode) { //点击了“搜索”   
+						//$("#values").focus();获取焦点 
+						document.getElementById('barcode').focus();
+						document.activeElement.blur(); //隐藏软键盘  
+						//doSubmit(); //这里可以写搜索会触发的逻辑，具体内容根据项目需求
+						var bc = document.getElementById("barcode");
+						if (bc.value.length == 0) {
+							plus.ui.toast("请先扫描或者输入批次号");
+							return false;
+						}else{
+							getStatList(bc.value);
+						}
+						
+					}
+				}, false);
+				
+				document.getElementById('moreId').addEventListener('tap', function(event) {
+					document.getElementById('ul').innerHTML = template('li-template', {
+						"record": []
+					});
+					mui.openWindow({
+						id: 'NG_check_list',
+						url: 'NG_check_list.html',
+						waiting: { // 控制 弹出转圈框的信息
+							autoShow: true, //自动显示等待框，默认为true 
+							title: '加载中' //等待对话框上显示的提示内容 
+						}
+					});
+				
+				});
+			})
+		</script>
+	</body>
+</html>

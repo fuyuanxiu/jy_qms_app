@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<style type="text/css">
+			.mui-content {
+				margin-top: 2px;
+			}
+			.mui-content input{
+				text-align:left
+			}
+			.search {
+				border: 1px solid #e0e0e0;
+				border-radius: 5px;
+				display: flex;
+				width: 100%;
+				align-items: center;
+				margin-top: 10px;
+				/* padding:0px 10px 0;*/
+				background-color: rgba(255, 255, 255, 1);
+				padding-left: 10px;
+				margin-bottom: 10px;
+				height: 40px;
+			}
+
+			.search input[type=text] {
+				margin-bottom: 2px;
+				padding: 0px 0px;
+				background: none;
+			}
+
+			.slecet {
+				float: right;
+				text-align: right;
+				width: 90%;
+				color: #0062CC;
+			}
+
+			/*标题中图标居右侧的css样式*/
+			.title-right {
+				float: right;
+				line-height: 44px !important;
+				position: absolute;
+				display: block;
+				width: 100%;
+				margin: 0 0px !important;
+				padding: 0 !important;
+				text-align: center;
+				white-space: nowrap;
+				color: #000;
+				display: inline-block;
+				overflow: hidden;
+				width: auto;
+				margin: 0;
+				text-overflow: ellipsis;
+				--color: #de1312;
+			}
+
+			.mui-badge1 {
+				padding: 0px;
+				width: 65%;
+				float: right;
+				line-height: 42px;
+				font-size: 14px;
+			}
+
+			.mui-popup-title {
+				color: red;
+			}
+			
+			.font-seal {
+				font-size: 10px;z-index: 2;position: absolute;right:14px;top: 15px;    border: 1px solid #F73A3C;
+				transform: rotate(25deg);width: 43px;line-height: 20px;text-align: center;color: #F73A3C;font-weight: bold;
+			}
+			.acss a{
+				text-align: center;
+				color: #fff;
+				text-decoration: none;
+				/* background-color: rgb(255, 145, 0); */
+			}
+			.noodles{
+			    display: inline-block;
+			    padding: 0.125rem;
+			    border:1px rgb(255, 145, 0) dashed;
+			    margin: 0.3125rem;
+			}
+			.ncheck{
+				background:#FFA54F;
+			}
+		</style>
+	</head>
+	<body class="mui-fullscreen">
+		<header class="mui-bar mui-bar-nav">
+			<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+				<span class="mui-icon mui-icon-left-nav"></span>
+			</button>
+			<h1 class="mui-title">IQC不合格申请单</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-input-group">
+				<div class="mui-input-row">
+					<label ><span class="mui-icon iconfont icon-saomiao" style="color: #FF8C00;"></span>来料批次</label>
+					<input id="pici" type="text" disabled style="background-color: #F5F5F5;"  class="mui-input-clear" >
+				</div>
+				<div class="mui-input-row" >
+					<label ><span class="mui-icon iconfont icon-saomiao" id="num1"></span>实际批次号</label>
+					<a class="mui-navigate-right">
+						<span class="mui-badge1">
+							<select class="mui-h5" style="margin:auto; color:#000;" id="realSelectId" >
+								<option value="">请点击选择实际批次号</option>
+							</select>
+						</span>
+					</a>
+				</div>
+<!-- <HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3);margin-top: 1.25rem;" width="100%" color=#FF9100 SIZE=3>
+ -->
+			</div>
+			<div id="cardId" style="margin-top: 1.25rem;"></div>
+
+			<script id='record-template-2' type="text/template">
+				
+			<% for(var i in record){ var item=record[i]; %>
+			   <option value='<%=(item)%>'><%=(item)%></option>
+			<% } %>
+		</script>
+		<script id='card-template' type="text/template">
+			<% for(var i in record){ var item=record[i]; %>		  
+			   <div class="mui-card " >
+			    <div class="mui-slider-handle">
+			   	<div class="mui-card-header">		
+			   		来料批次:<%=(item.FBAR_CODE)%>
+			   		<span class="mui-media-object mui-pull-left" style="border-radius: 0%;        display: inline-block;    background: #<%=(item.COLOR)%>;      vertical-align: top;">  
+			   		     <span style="display: block;      height: 20px;        text-align: center"><%=(item.FSTATENAME)%></span>  
+			   		</span>
+			   		
+			   	</div>
+			   	<div class="mui-card-content">
+			   		<div class="mui-input-group">
+						<div class="mui-input-row" >
+							<label ><span class="mui-icon iconfont icon-jianyanxiangmu" style="color:#5CACEE"></span>实际批次：</label>
+							<input type="text" class="mui-input-clear" value="<%=(item.FNG_CODE)%>" disabled style="background-color: #F5F5F5;"> 
+						</div>
+						<div class="mui-input-row" >
+							<label ><span class="mui-icon iconfont icon-shuliang" style="color:#5CACEE"></span>批次数量：</label>
+							<input type="text" class="mui-input-clear" value="<%=(item.FLOT_QTY)%>" disabled style="background-color: #F5F5F5;"> 
+						</div>
+			   		    <div class="mui-input-row">
+			   				<label><span class="mui-icon iconfont icon-wuliao" style="color:#5CACEE"></span>备注：</label>
+			   				{{if item.APLY_FLAG=='0'}}
+							<input type="text" class="mui-input-clear" value="<%=(item.FNOTE)%>" onkeyup="enterSearch(this,event,'<%=(item.ID)%>')"> 
+							{{else}}
+							<input type="text" class="mui-input-clear" value="<%=(item.FNOTE)%>" disabled style="background-color: #F5F5F5;"> 
+							{{/if}}
+
+			   			</div>
+						
+			   			<!-- <div class="mui-input-row" id="dealDiv">
+			   				<label><span class="mui-icon iconfont icon-guige" style="color:#5CACEE"></span>申请：</label>
+			   					<input type="text" class="mui-input-clear" value="<%=(item.APLY_FLAG)%>" disabled> 
+			   			</div> -->
+			   			<div class="mui-input-row" >
+			   				<label ><span class="mui-icon iconfont icon-xilie" style="color:#5CACEE"></span>报废数量：</label>
+			   				<input type="text" class="mui-input-clear" value="<%=(item.FOA_BFSL)%>" disabled style="background-color: #F5F5F5;"> 
+			   			</div>
+						
+						<div class="mui-input-row" >
+							<label ><span class="mui-icon iconfont icon-bianzu" style="color:#5CACEE"></span>特采数量：</label>
+							<input type="text" class="mui-input-clear" value="<%=(item.FOA_TCSL)%>" disabled style="background-color: #F5F5F5;"> 
+						</div>
+						
+						<div class="mui-input-row" >
+							<label ><span class="mui-icon iconfont icon-xuhao3" style="color:#5CACEE"></span>返工数量：</label>
+							<input type="text" class="mui-input-clear" value="<%=(item.FOA_FGSL)%>" disabled style="background-color: #F5F5F5;"> 
+						</div>
+						<div class="mui-input-row" style="height: 4.5rem;">
+							<label ><span class="mui-icon iconfont icon-wuliao" style="color:#5CACEE"></span>物料：</label>
+							<textarea type="text" class="mui-input-clear" value="<%=(item.FITEM_NO)%>" disabled style="background-color: #F5F5F5;"><%=(item.FITEM_NO)%> </textarea>
+						</div>
+						<li class="mui-table-view-cell">
+						    <a id="aplyBtn" data-id="<%=(item.ID)%>" class="mui-navigate-right">点击查看流程信息</a>
+						</li>
+			   		</div>
+			   	</div>
+			   	<!--页脚，放置补充信息或支持的操作-->
+			   	<div class="mui-card-footer" >
+			   		<button id="delBtn" data-id="<%=(item.ID)%>" data-code="<%=(item.FNG_CODE)%>" type="button" data-loading-text="删除中" class="mui-btn mui-btn-danger">删除</button>
+					{{if item.APLY_FLAG=='0'}}
+					<button id="saveBtn"  data-code="<%=(item.FNG_CODE)%>" type="button"  data-loading-text="提交中" class="mui-btn mui-btn-success">提交申请</button>
+					{{else}}
+					<button id="saveBtn"  data-code="<%=(item.FNG_CODE)%>" type="button" disabled data-loading-text="提交中" class="mui-btn mui-btn-success">提交申请</button>
+					{{/if}}
+			   	</div>
+			   </div>
+			   </div>
+			<% } %>
+		</script>
+
+		</div>
+
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+			var pici='';var flotId='';
+			mui.plusReady(function() {
+				//console.log(JSON.stringify(plus.webview.currentWebview()))
+				pici= plus.webview.currentWebview().flotNo;
+				flotId= plus.webview.currentWebview().flotId;
+				document.getElementById('pici').value = pici;
+				doRealFlotNo('0','','');
+				//获取实际批次
+				getNgFlotNo()
+				
+				selectRealFlotNo()
+				doDelTap()
+				doSaveTap()
+				goAply()
+
+				//输入法软键盘的搜索
+				/* document.getElementById("premark").addEventListener("keydown", function(e) {
+					if (13 == e.keyCode) { //点击了“搜索”    
+						//document.getElementById('barcode').focus();
+						document.activeElement.blur(); //隐藏软键盘  
+						//console.log(document.getElementById('premark').value)
+						doCheckitemByFiel('FNOTE',document.getElementById('premark').value,document.getElementById('did').value); //这里可以写搜索会触发的逻辑，具体内容根据项目需求	
+					}
+				}, false); */
+				
+				mui(document.body).on('tap', '.mui-btn', function(e) {
+				    mui(this).button('loading');
+				    setTimeout(function() {
+				        mui(this).button('reset');
+				    }.bind(this), 1000);
+				});
+				
+			})
+		function getNgFlotNo(){
+			aj.post("/iqc/getNgFlotNo", {
+						factory: api_localStorageGet("factory"),
+						company: api_localStorageGet("company"),
+						flot:pici
+					}, function (data) {
+				if (data.result) {
+					var html = '<option value="">请点击选择实际批次号</option>'
+
+					document.getElementById('realSelectId').innerHTML = html+template('record-template-2', {
+						"record": data.data
+					});
+				} else {
+					plus.ui.toast(data.msg);
+				}
+			});
+		}
+		function selectRealFlotNo(){
+			var id = document.getElementById("realSelectId");
+			id.addEventListener('change',function(){
+				var obj = document.getElementById('realSelectId'); //定位id
+				var index = obj.selectedIndex; // 选中索引
+				var value = obj.options[index].value; // 选中值
+				doRealFlotNo('1',value,'');
+			});
+		}
+		function doRealFlotNo(ftype,flotno,did){
+			aj.post("/iqc/doNgCreate", {
+						factory: api_localStorageGet("factory"),
+						company: api_localStorageGet("company"),
+						username:api_localStorageGet("code"),
+						pid:flotId,
+						flotno:flotno,
+						ftype:ftype,
+						did:did
+					}, function (data) {
+				if (data.result) {
+					//console.log(JSON.stringify(data))
+					//getCheckitem()
+					plus.ui.toast(data.msg);
+					if(ftype == '2'){
+						getNgFlotNo()
+					}
+					document.getElementById('cardId').innerHTML = template('card-template', {
+						"record": data.data.Flot
+					});
+					
+				} else {
+					plus.ui.toast(data.msg);
+				}
+			});
+		}
+		function doCheckitemByFiel(fielname,fielValue,did){
+			aj.post("/iqc/doNgUpdatefield", {
+						factory: api_localStorageGet("factory"),
+						company: api_localStorageGet("company"),
+						username:api_localStorageGet("code"),
+						pid:did,
+						fielName:fielname,
+						fielValue:fielValue
+					}, function (data) {
+						if (data.result) {
+							plus.ui.toast('操作成功');
+						} else {
+							plus.ui.toast(data.msg);
+						}
+			});
+		}
+		function doSaveTap(){
+			mui("#cardId").on('tap','#saveBtn',function(){
+				var code  = this.getAttribute("data-code");
+				var btnArray = ['否', '是'];
+				   mui.confirm('一旦确认就提交OA且不可删除，是否确定提交？', '不合格申请确认', btnArray, function(e) {
+				       if (e.index == 1) {
+				           	doRealFlotNo('3',code,'');
+				       }
+				   })
+				 });
+			 
+			
+		}
+		function doDelTap(){
+			mui("#cardId").on('tap','#delBtn',function(){
+				var code  = this.getAttribute("data-code");
+				var did  = this.getAttribute("data-id");
+				doRealFlotNo('2',code,did);
+			});
+		}
+		function enterSearch(thisEv,event,did) {
+			//
+			//checkSymbol(thisEv)
+			if (event.keyCode == 13 || event.keyCode == 9) {
+				doCheckitemByFiel('FNOTE',thisEv.value,did);
+			}
+		}
+		function goAply(){
+			mui("#cardId").on('tap','#aplyBtn',function(){
+				var did  = this.getAttribute("data-id");
+				//console.log(did)
+				//doRealFlotNo('2',code,did);
+				mui.openWindow({
+					id: 'IQC_Ng_aply',
+					url: 'IQC_Ng_aply.html',
+					extras: {
+						pid:did
+						//自定义扩展参数，可以用来处理页面间传值 
+					},
+					waiting: { // 控制 弹出转圈框的信息
+						autoShow: true, //自动显示等待框，默认为true 
+						title: '加载中' //等待对话框上显示的提示内容 
+					}
+				});
+			});
+		}
+		</script>
+	</body>
+</html>

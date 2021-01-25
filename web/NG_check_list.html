@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<style type="text/css">
+			.mui-content {
+				margin-top: 2px;
+			}
+			.font-seal{
+				font-size: 10px;z-index: 2;position: absolute;right:14px;top: 15px;    border: 1px solid #F73A3C;
+				transform: rotate(25deg);width: 43px;line-height: 20px;text-align: center;
+				color: #F73A3C;font-weight: bold;
+			}
+
+		</style>
+	</head>
+	<body class="mui-fullscreen">
+		<header class="mui-bar mui-bar-nav" id="header">
+			<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+				<span class="mui-icon mui-icon-left-nav"></span>
+			</button>
+			<h1 class="mui-title">不良品记录</h1>
+		</header>
+		<div class="mui-content" id="contentId">
+			<!--下拉刷新容器-->
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+			  <div class="mui-scroll">
+				<!--数据列表-->
+				<ul class="mui-table-view" id='ul'>
+					
+				</ul>
+			  </div>
+			</div>
+		</div>
+		<script id='li-template' type="text/template">
+			<% for(var i in record){ var item=record[i]; %>
+			   <li class="mui-table-view-cell mui-media" data-id = "<%=(item.ID)%>">
+				   <div class="mui-slider-handle">
+			   	<a href="javascript:;">
+				{{if item.FDEAL_TYPE == '修理'}}
+				<div class="font-seal" style="color: #336699;border: 1px solid #336699"><%=item.FDEAL_TYPE%></div>
+				{{else}}
+				<div class="font-seal" style="color: #FF6666;border: 1px solid #FF6666"><%=item.FDEAL_TYPE%></div>
+				{{/if}}
+				{{if item.FBAR_LOT == '按条码'}}
+				<span class="mui-media-object mui-pull-left mui-icon iconfont icon-tiaoma" style="color: #666699;font-size:1.5625rem"></span>
+				{{else}}
+				<span class="mui-media-object mui-pull-left mui-icon iconfont icon-pici" style="color: #CC9999;font-size:1.875rem"></span>
+				{{/if}}
+			   		
+			   		<div class="mui-media-body">
+			   			<span class="mui-badge mui-badge-success"><%=(item.FNG_QTY)%></span>
+			   			<%=(item.FBAR_CODE)%>
+			   			<p class='mui-ellipsis'><%=(item.LASTUPDATE_DATE)%>  <%=(item.STAT_NAME)%>-><%=(item.FNG_TYPE)%>-><%=(item.FNG_CODE_NAME)%></p>
+			   		</div>
+			   	</a>
+				</div>
+			   	<div class="mui-slider-right mui-disabled">
+						<a class="mui-btn mui-btn-red">删除</a>
+				</div>
+					
+			   </li>
+			<% } %>
+		</script>
+
+		<script type="text/javascript" charset="utf-8">
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {//下拉刷新
+						auto:true,//可选,默认false.自动下拉刷新一次
+						contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: pulldownRefresh
+					}, 
+					up: {//上拉加载
+						//auto:true,//可选,默认false.自动上拉加载一次
+						contentrefresh: '正在加载...',
+						contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+						callback: pullupRefresh
+					}
+				}
+			});
+			mui.plusReady(function() {
+				toList({page:1},2);
+				document.getElementById('header').addEventListener('tap', function(event) {
+					mui('#pullrefresh').pullRefresh().scrollTo(0, 0, 100); //滚动到顶部
+				});
+				tapDelete();
+			})
+			var count = 1;
+			function pulldownRefresh(){
+				  count=1;//第一页
+				  data={
+				  	//...,
+				  	page:count
+				  };
+				  type=1;//代表下拉刷新
+				  toList(data,type);//具体取数据的方法
+			}
+			function pullupRefresh(){
+				//setTimeout(function() {
+				count++;//翻下一页
+				data={
+					//...,
+					page:count
+				};
+				type=2;//代表上拉加载
+				toList(data,type);//具体取数据的方法
+			//}, 100);
+			}
+			function toList(data,type){
+				aj.post("/ng/getList", data, function (data) {
+					if (data.result) {
+						if(type==2){//下拉加载
+							if(data.data.status == 0){
+								var html = document.getElementById("ul").innerHTML;
+								document.getElementById('ul').innerHTML = html+template('li-template', {
+									"record":data.data.List
+								});
+								
+							}
+							mui('#pullrefresh').pullRefresh().endPulldownToRefresh();//结束下拉刷新
+							 /*结束上拉加载，并根据情况切换“下拉显示更多数据”，以及“没有更多数据了”。执行endPullupToRefresh()方法，结束转雪花进度条的“正在加载...”过程,若还有更多数据，则传入false; 否则传入true，之后滚动条滚动到底时*/
+							 if(data.data.status == 0){
+								 mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+							 } else {
+								 mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+							 }
+						}
+						if(type==1){//上拉刷新
+							  /*下面这句很关键！*/
+							  mui('#pullrefresh').pullRefresh().refresh(true);//有重新触发上拉加载的需求（比如当前类别已无更多数据，但切换到另外一个类别后，应支持继续上拉加载）
+							  //vm.companylist = data.company_list;
+							  //plus.nativeUI.closeWaiting();//数据渲染完毕，关闭加载框
+							  mui.currentWebview.show(); //显示当前页面
+								 var html = document.getElementById("ul").innerHTML;
+								 document.getElementById('ul').innerHTML = html+template('li-template', {
+									"record":data.data.List
+								 });
+						 }
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+				/* plus.nativeUI.showWaiting("等待中....",{padlock: true});//数据出来前显示等待加载框
+				mui.ajax(API.webPath + '/ng/getList', {
+					data:data,
+					dataType: 'json',
+					type: 'POST',
+					timeout: 10000,
+					success: function(data) {
+						//console.log(JSON.stringify(data))
+						plus.nativeUI.closeWaiting();
+						if(data.result){
+							//template(data.data);
+							if(type==2){//下拉加载
+								if(data.data.status == 0){
+									var html = document.getElementById("ul").innerHTML;
+									document.getElementById('ul').innerHTML = html+template('li-template', {
+										"record":data.data.List
+									});
+									
+								}
+								mui('#pullrefresh').pullRefresh().endPulldownToRefresh();//结束下拉刷新
+								 if(data.data.status == 0){
+									 mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+								 } else {
+									 mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+								 }
+							}
+							if(type==1){//上拉刷新
+								
+								  mui('#pullrefresh').pullRefresh().refresh(true);//有重新触发上拉加载的需求（比如当前类别已无更多数据，但切换到另外一个类别后，应支持继续上拉加载）
+								  //vm.companylist = data.company_list;
+								  //plus.nativeUI.closeWaiting();//数据渲染完毕，关闭加载框
+								  mui.currentWebview.show(); //显示当前页面
+									 var html = document.getElementById("ul").innerHTML;
+									 document.getElementById('ul').innerHTML = html+template('li-template', {
+										"record":data.data.List
+									 });
+							 }
+							
+						}else{
+							plus.ui.toast(data.msg);
+						}
+					},
+					error: function(xhr, type, errerThrown) {
+						mui.toast('网络异常,请稍候再试');
+						plus.nativeUI.closeWaiting();  
+						mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+					}
+				}); */
+			}
+			function tapDelete(){
+				mui('#ul').on('tap', '.mui-btn', function(event) {
+					var elem = this;
+					var li = elem.parentNode.parentNode;
+					var btnArray = ['确认', '取消'];
+					mui.confirm('确认删除该条记录？', '系统提示', btnArray, function(e) {
+						if (e.index == 0) {
+							li.parentNode.removeChild(li);
+							//console.log(li.getAttribute('data-id'))
+							doDelete(li.getAttribute('data-id'));
+						} else {
+							setTimeout(function() {
+								$.swipeoutClose(li);
+							}, 0);
+						}
+					});
+				});
+			}
+			function doDelete(ngid){
+				/* var url = API.webPath + '/ng/saveNg?ngid='+ngid+'&company='+api_localStorageGet("company")+'&factory='+api_localStorageGet("factory")+
+				'&fstate=&ngtype=&usercode='+api_localStorageGet("code")+
+				'&ngcode=&deal=&qty=&note=&barcode='; */
+				aj.post("/ng/saveNg", {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							ngid:ngid,
+							fstate:'',
+							ngtype:'',
+							usercode:api_localStorageGet("code"),
+							ngcode:'',
+							deal:'',
+							qty:'',
+							note:'',
+							barcode:''
+						}, function (data) {
+					if (data.result) {
+						plus.ui.toast(data.msg);
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+				/* mui.ajax(url, {
+					data: {},
+					dataType: 'json',
+					type: 'POST',
+					timeout: 20000,
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+						plus.ui.toast(data.msg);
+					},
+					error: function(xhr, type, errorThrown) {
+						plus.ui.toast('失败类型是:' + type);
+					}
+				}); */
+			}
+		</script>
+	</body>
+</html>

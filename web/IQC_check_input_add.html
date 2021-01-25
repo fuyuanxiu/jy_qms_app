@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<style type="text/css">
+			.mui-content {
+				margin-top: 2px;
+			}
+
+			.ulcss {
+				padding: 5px 5px;
+			}
+
+			.ulcss a {
+				border: solid 1px #FFFFF;
+				background-color: #E6E6FA;
+				--border-radius: 30px;
+				border-top-left-radius: 20px;
+				border-bottom-left-radius: 20px;
+				border-bottom-right-radius: 20px;
+			}
+
+			.close {
+				position: absolute;
+				top: 0;
+				right: 0;
+				z-index: 99;
+				color: red;
+			}
+
+			.search {
+				border: 1px solid #e0e0e0;
+				border-radius: 5px;
+				display: flex;
+				width: 100%;
+				align-items: center;
+				margin-top: 10px;
+				/* padding:0px 10px 0;*/
+				background-color: rgba(255, 255, 255, 1);
+				padding-left: 10px;
+				margin-bottom: 10px;
+				height: 40px;
+			}
+
+			.search input {
+				margin-bottom: 2px;
+				padding: 0px 0px;
+				--background: none;
+				border-radius: 5px;
+			}
+
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title" >
+			IQC检验项目录入
+			<span class="mui-badge mui-badge-primary" id='num'>0</span>
+			    <!-- <span class="mui-badge mui-badge-danger" id='num1'>1042±1</span> -->
+		   </h1>	
+		</header>
+		<div class="mui-content" id="contentId">
+			<ul class="mui-table-view"> 
+				<li class="mui-table-view-cell mui-collapse mui-active">
+					<a class="mui-navigate-right" href="#">详细信息</a>
+					<div class="mui-collapse-content" id="collapseId">
+						
+					</div>
+				</li>
+			</ul>
+			<div class="search">
+				<span class="mui-icon iconfont icon-jianyan" style="color:#0062CC"></span>
+				<input type="search" class="mui-input-clear" placeholder="请输入检验值" id="values">
+				<button type="button" class="mui-btn mui-btn-green mui-icon mui-icon-checkmarkempty" id="addBtn">确认</button>
+			</div>
+			<ul class="mui-table-view mui-grid-view mui-grid-9 ulcss" id="list">
+			</ul>
+		</div>
+
+		<script id='col-template' type="text/template">
+            <form class="mui-input-group" >
+			<div class="mui-input-row">
+			    <label>检验项目:</label>
+			    <input type="text" class="mui-input-clear" value="<%=item.FNAME%>" disabled="disabled">
+			</div>
+			{{if item.FST !=''}}
+			  <div class="mui-input-row">
+			      <label>标准值:</label>
+			      <input type="text" class="mui-input-clear" value="<%=item.FST%>" disabled="disabled">
+			  </div>
+			{{/if}}
+			{{if item.FUPPER !=''}}
+			  <div class="mui-input-row">
+			      <label>上限值:</label>
+			      <input type="text" class="mui-input-clear" value="<%=item.FUPPER%>" disabled="disabled">
+			  </div>
+			{{/if}}
+			{{if item.FLOWER !=''}}
+			  <div class="mui-input-row">
+			      <label>下限值:</label>
+			      <input type="text" class="mui-input-clear" value="<%=item.FLOWER%>" disabled="disabled">
+			  </div>
+			{{/if}}
+			{{if item.FREQU !=''}}
+			  <div class="mui-input-row">
+			      <label>检验要求:</label>
+			      <input type="text" class="mui-input-clear" value="<%=item.FREQU%>" disabled="disabled">
+			  </div>
+			{{/if}}
+			</form>
+		</script>
+		
+		<script id='ui-template' type="text/template">
+			<% for(var i in record){ var item=record[i]; %>
+						<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 ">
+							<a href="#" style="height: 4.375rem;"> 
+								<div class="close" id="<%=item.ID%>">
+								<span class="mui-icon iconfont icon-guanbi1" style="color:#d81e06;font-size:1rem;"></span></div>
+								<div class="mui-media-body"><%=item.FCHECK_VALUES%><%=item.FUNIT%></div>
+								 <HR style= " border: 1 dashed #987cb9" width ="80%" color =#987 cb 9 SIZE = 1>
+								<%if(item.FCHECK_RESULT=='合格'){%>
+								<span class="mui-icon iconfont icon-hege1" style="color:#A0BF7C;font-size:1rem;"></span>
+								<%}else{%>
+								  <span class="mui-icon iconfont icon-buhege1" style="color:#FD8383;font-size:1rem;"></span>
+								<%}%>
+							</a>
+						</li>
+						<% } %>
+			</script>
+						
+		</div>
+
+		<script type="text/javascript" charset="utf-8">
+			var count = 0;
+			mui.init({
+                    beforeback: function() {　　　　
+                        var list = plus.webview.currentWebview().opener();　　　　
+                        mui.fire(list, 'refresh');//refresh是A页面自定义事件
+                        return true; //返回true,继续页面关闭逻辑
+                    }
+                });
+			mui.plusReady(function() {
+				count = GetQueryString('num');
+				document.getElementById("num").innerHTML = count;
+				//alert(GetQueryString('did'));
+				//将数据绑定到界面上
+				aj.post("/iqc/getCheckResult", {
+							did:GetQueryString('did')
+						}, function (data) {
+					if (data.result) {
+						document.getElementById('list').innerHTML = template('ui-template', {
+							"record": data.data.DA
+						});
+						document.getElementById('collapseId').innerHTML = template('col-template', {
+							"item": data.data.INFO
+						});
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+				/* mui.ajax(API.webPath + '/iqc/getCheckResult?did=' + GetQueryString('did'), {
+					data: {},
+					dataType: 'json',
+					type: 'POST',
+					timeout: 10000,
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+						if (data.result) {
+							document.getElementById('list').innerHTML = template('ui-template', {
+								"record": data.data.DA
+							});
+							document.getElementById('collapseId').innerHTML = template('col-template', {
+								"item": data.data.INFO
+							});
+						} else {
+							plus.ui.toast(data.msg);
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						plus.ui.toast('获取批次号失败!失败类型是:' + type);
+					}
+				}); */
+
+				//输入法软键盘的搜索
+				document.getElementById("values").addEventListener("keydown", function(e) {
+					if (13 == e.keyCode) { //点击了“搜索”   
+						//$("#values").focus();获取焦点 
+						document.activeElement.blur(); //隐藏软键盘  
+						addUi(0, -1); //这里可以写搜索会触发的逻辑，具体内容根据项目需求
+					}
+				}, false);
+
+				mui('.search').on('tap', '#addBtn', function(event) {
+					addUi(0, -1)
+				})
+				//点击X事件
+				var btnArray = ['确认', '取消'];
+				mui("#list").on("tap", ".close", function(event) {
+					var id = this.getAttribute('id');
+					var elem = this;
+					var li = elem.parentNode.parentNode;
+					mui.confirm('确定删除此条记录？', '提示', btnArray, function(e) {
+						if (e.index == 0) {
+							li.parentNode.removeChild(li);
+							if (id) {
+								//alert('执行后台方法');
+								addUi(2, id)
+							}
+						} else {
+							setTimeout(function() {
+								$.swipeoutClose(li);
+							}, 0);
+						}
+					});
+				})
+			});
+			//添加检验值到table
+			function addUi(type, id1) {
+				//计算个数
+				var ul = document.getElementById('list');
+				var ul_lis = ul.getElementsByTagName('li');
+				if (count <= ul_lis.length) {
+					plus.ui.toast('已经超出检验值个数!');
+					return;
+				}
+				aj.post("/iqc/addCheckResult", {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							did:GetQueryString('did'),
+							mid:GetQueryString('mid'),
+							username:api_localStorageGet("code"),
+							type:type,
+							values:document.getElementById("values").value,
+							valid:id1
+						}, function (data) {
+					if (data.result) {
+						if (type == 0) {
+							var record = [{
+								FCHECK_VALUES: document.getElementById("values").value,
+								FCHECK_RESULT: data.data[3],
+								ID: data.data[2]
+							}];
+							var html = document.getElementById("list").innerHTML;
+							document.getElementById('list').innerHTML = html + template('ui-template', {
+								"record": record
+							});
+						}
+					} else {
+						plus.ui.toast(data.msg);
+					}
+					document.getElementById("values").value='';
+					document.getElementById("values").focus();//获取焦点
+				});
+				/* mui.ajax(API.webPath + '/iqc/addCheckResult?did=' + GetQueryString('did') + '&mid=' + GetQueryString('mid') +
+					'&company='+api_localStorageGet("company")+'&factory='+api_localStorageGet("factory")+'&username='+api_localStorageGet("code")+'&type=' + type + '&values=' + document.getElementById("values").value +
+					'&valid=' + id1, {
+						data: {},
+						dataType: 'json',
+						type: 'POST',
+						timeout: 50000,
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						success: function(data) {
+							if (data.result) {
+								//alert(data.data[0]);
+								if (type == 0) {
+									var record = [{
+										FCHECK_VALUES: document.getElementById("values").value,
+										FCHECK_RESULT: data.data[3],
+										ID: data.data[2]
+									}];
+									var html = document.getElementById("list").innerHTML;
+									document.getElementById('list').innerHTML = html + template('ui-template', {
+										"record": record
+									});
+								}
+
+							} else {
+								plus.ui.toast(data.msg);
+							}
+							document.getElementById("values").value='';
+							document.getElementById("values").focus();获取焦点
+						},
+						error: function(xhr, type, errorThrown) {
+							plus.ui.toast('获取批次号失败!失败类型是:' + type);
+						}
+					}); */
+			}
+		</script>
+	</body>
+</html>

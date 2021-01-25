@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/timeline.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<style type="text/css">
+			.mui-content {
+				margin-top: 2px;
+			}
+			.font-seal{
+				font-size: 10px;z-index: 2;position: absolute;right:14px;top: 15px;    border: 1px solid #F73A3C;
+				transform: rotate(25deg);width: 43px;line-height: 20px;text-align: center;
+				color: #F73A3C;font-weight: bold;
+			}
+
+		</style>
+	</head>
+	<body class="mui-fullscreen">
+		<header class="mui-bar mui-bar-nav" id="header">
+			<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+				<span class="mui-icon mui-icon-left-nav"></span>
+			</button>
+			<h1 class="mui-title">审批记录</h1>
+		</header>
+		<div class="mui-content" >
+			<div class="empty-container" style="display: none;">
+			            <div class="nodata-info">暂无相关内容</div>
+			            <div class="nodata-icon">
+			                <span class="mui-icon iconfont icon-wuneirong"></span>
+			            </div>
+			        </div>
+			        <section id="cd-timeline" class="cd-container"  style="">
+			           <div id="contentId"></div>
+						<!-- <div class="cd-timeline-block">
+			                <div class="cd-timeline-img cd-picture"></div>
+			                <div class="cd-timeline-content">
+			                    <div>用户4，工单结束</div> <div class="cd-date">2018-05-22 14:33:58</div>
+			                </div>
+			            </div>
+			            <div class="cd-timeline-block">
+			                <div class="cd-timeline-img cd-movie"></div>
+			                <div class="cd-timeline-content">
+			                    <div>用户4，工作人员到场签到</div>
+			                    <div class="cd-date">2018-05-22 14:33:44</div>
+			                </div>
+			            </div>
+						<div class="cd-timeline-block">
+			                <div class="cd-timeline-img cd-movie"></div> <div class="cd-timeline-content">
+			                    <div>用户4，分配工作人员</div>
+			                    <div class="cd-date">2018-05-22 14:33:34</div>
+			                </div>
+			            </div>
+			            <div class="cd-timeline-block">
+			                <div class="cd-timeline-img cd-movie"></div>
+			                <div class="cd-timeline-content"><div>用户4，提交报修单</div> <div class="cd-date">2018-05-21 18:06:44</div></div>
+			            </div> -->
+			        </section>
+					<script id='li-template' type="text/template">
+						<% for(var i in record){ var item=record[i]; %>
+						   <div class="cd-timeline-block">
+						   {{if i==0}}
+						   <div class="cd-timeline-img cd-picture"></div>
+						   {{else}}
+						   <div class="cd-timeline-img cd-movie"></div>
+						   {{/if}}
+						       
+						       <div class="cd-timeline-content">
+						           <div><%=(item.NODENAME)%>，<%=(item.RECEIVEDPERSONS)%></div> 
+								   <div ><%=(item.REMARK)%></div>
+								   <div class="cd-date"><%=(item.OPERATEDATE)%></div>
+						       </div>
+						   </div>
+						<% } %>
+					</script>
+		</div>
+		
+
+		<script type="text/javascript" charset="utf-8">
+			mui.init({
+			});
+			var pid="";
+			mui.plusReady(function() {
+				pid= plus.webview.currentWebview().pid;
+				//console.log(pid)
+				getList(plus.webview.currentWebview().pid)
+			})
+			function getList(pid){
+				aj.post("/iqc/getNgAplyList", {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							pid:pid
+						}, function (data) {
+					if (data.result) {
+						//console.log(JSON.stringify(data.data))
+						 document.getElementById('contentId').innerHTML = template('li-template', {
+							"record": data.data
+						}); 
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/mui.picker.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<script src="../js/mui.picker.min.js"></script>
+		<style type="text/css">
+			.mui-content {
+				margin-top: 2px;
+			}
+			.mui-content input{
+				text-align:left
+			}
+
+			/*标题中图标居右侧的css样式*/
+			.title-right {
+				float: right;
+				line-height: 44px !important;
+				position: absolute;
+				display: block;
+				width: 100%;
+				margin: 0 0px !important;
+				padding: 0 !important;
+				text-align: center;
+				white-space: nowrap;
+				color: #000;
+				display: inline-block;
+				overflow: hidden;
+				width: auto;
+				margin: 0;
+				text-overflow: ellipsis;
+				--color: #de1312;
+			}
+
+			.mui-badge1 {
+				padding: 0px;
+				width: 65%;
+				float: right;
+				line-height: 42px;
+				font-size: 14px;
+			}
+
+			.mui-popup-title {
+				color: red;
+			}
+			
+			.font-seal {
+				font-size: 10px;z-index: 2;position: absolute;right:14px;top: 15px;    border: 1px solid #F73A3C;
+				transform: rotate(25deg);width: 43px;line-height: 20px;text-align: center;color: #F73A3C;font-weight: bold;
+			}
+			
+			/** 自定义文字*/
+			.mui-switch {
+				width: 120px;
+			}
+			
+			.mui-switch.mui-active .mui-switch-handle {
+				transform: translate(88px, 0px);
+			}
+			
+			.mui-switch:before {
+				content: '不合格';
+				color: #999;
+			}
+			
+			.mui-switch.mui-active:before {
+				content: '合格';
+				color: #fff;
+			}
+			.ulcss {
+				padding: 5px 5px;
+			}
+			
+			.ulcss a {
+				border: solid 1px #FFFFF;
+				background-color: #E6E6FA;
+				--border-radius: 30px;
+				border-top-left-radius: 20px;
+				border-bottom-left-radius: 20px;
+				border-bottom-right-radius: 20px;
+			}
+			.acss a{
+				text-align: center;
+				color: #fff;
+				text-decoration: none;
+				--background-color: rgb(255, 145, 0);
+				border-radius: 5px;
+			}
+			.close {
+				position: absolute;
+				top: 0;
+				right: 0;
+				z-index: 99;
+				color: red;
+			}
+			.noodles{
+			    display: inline-block;
+			    padding: 0.125rem;
+			    border:1px rgb(255, 145, 0) dashed;
+			    margin: 0.3125rem;
+			}
+			.ncheck{
+				background:#FFA54F;
+			}
+		</style>
+	</head>
+	<body class="mui-fullscreen">
+		<header class="mui-bar mui-bar-nav">
+			<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+				<span class="mui-icon mui-icon-left-nav"></span>
+			</button>
+			<h1 class="mui-title">IQC半年免检</h1>
+			<span class="title-right mui-icon mui-icon-camera" style="color:#0062CC" id="cameraId"></span>
+		</header>
+		<div class="mui-content">
+			<div class="mui-input-group">
+				<div class="mui-input-row">
+					<!-- <label onclick="clicked('commom/saomiao.html','saomiao',true);"> -->
+					<label onclick="clicked('commom/saomiao.html','saomiao',true);"><span class="mui-icon iconfont icon-saomiao" id="num1"></span>扫描</label>
+					<input type="search" style="text-align:left "  class="mui-input-clear" placeholder="请输入批次号" class="mui-navigate-right" id="selectId">
+				</div>
+				<!--20191218-fyx -->
+				<div class="mui-input-row">
+					<label ><span class="mui-icon iconfont icon-wuliao" style="color: #FF8C00;"></span>物料名称</label>
+					<input id="pname" type="text" disabled="disabled" style="background-color: #F5F5F5;"   class="mui-input-clear" >
+				</div>
+				<div class="mui-input-row">
+						<label ><span class="mui-icon iconfont icon-guige" style="color: #FF8C00;"></span>规格型号</label>
+					<input id="ptype" type="text" disabled="disabled" style="background-color: #F5F5F5;"  class="mui-input-clear" >
+				</div>
+				<div class="mui-input-row">
+					<label ><span class="mui-icon iconfont icon-xilie" style="color: #FF8C00;"></span>系列</label>
+					<input id="pxilie" type="text" disabled="disabled" style="background-color: #F5F5F5;"  class="mui-input-clear" >
+				</div>
+				<div class="mui-input-row">
+					 <ul class="mui-table-view" id="submitBtn">
+						<li class="mui-table-view-cell acss" style="width:50%;float: left;background-color: rgb(153,204,153)">
+							<a data-code='1'>提交</a>
+						</li>
+						<li class="mui-table-view-cell acss"  style="width:50%;background-color: rgb(255,153,102)">
+							<a data-code='2'>撤销提交</a>
+						</li>
+					</ul> 
+				</div>
+				<ul class="mui-table-view"> 
+					<li class="mui-table-view-cell mui-collapse mui-active">
+						<a class="mui-navigate-right" href="#"><span class="mui-icon iconfont icon-xiangqing" style="color:#00FF00"></span>检验信息</a>
+						<div class="mui-collapse-content" id="collapseId">
+							
+						</div>
+					</li>
+				</ul>
+				<ul class="mui-table-view mui-grid-view mui-grid-9" style="margin-top: 20px;" id="list">
+				</ul>
+				
+			</div>
+			<script id='record-template' type="text/template">
+				<option value="">请点击选择批次号</option>
+			<% for(var i in record){ var item=record[i]; %>
+			   <option value='<%=(item)%>'><%=(item)%></option>
+			<% } %>
+		</script>
+		<script id='project-template' type="text/template">
+				<option value="">请点击选择检验项目</option>
+			<% for(var i in record){ var item=record[i]; %>
+			   <option value='<%=(item)%>'><%=(item)%></option>
+			<% } %>
+		</script>
+			<script id='form-template' type="text/template">
+				<% for(var i in record){ var item=record[i];va = item.result ; %>
+				<form class="mui-input-group" id="formId" >
+				<input type="hidden" id="pi_id" class="mui-input-clear" value="<%=item.id%>" >
+				<div class="mui-input-row">
+					<label ><span class="mui-icon iconfont icon-saomiao" id="num2"></span>实际批次号</label>
+					<a class="mui-navigate-right">
+						<span class="mui-badge1">
+							<select class="mui-h5" style="margin:auto; color:#000;" id="realSelectId" >
+								<option value="">请点击选择实际批次号</option>
+							</select>
+						</span>
+					</a>
+				</div>
+				
+				 <div class="mui-input-row mui-checkbox mui-left" data-id="<%=item.id%>" data-name="FITEM_EXTERIOR">
+						<label>外观</label>
+						<%if(item.fitem_exterior=='1'){%>
+						<input id="checkbox1" value="1" class="checkbox"type="checkbox" checked>
+						<%}else{%>
+						  <input id="checkbox1" value="1" class="checkbox" type="checkbox" >
+						<%}%>
+					</div>
+					<div class="mui-input-row mui-checkbox mui-left" data-id="<%=item.id%>" data-name="FITEM_SIZE">
+						<label>尺寸</label>
+						<input id="checkbox2" value="1" class="checkbox" type="checkbox">
+					</div>
+					<div class="mui-input-row mui-checkbox mui-left" data-id="<%=item.id%>" data-name="FITEM_WEIGHT">
+						<label>重量</label>
+						<input id="checkbox3" value="1" class="checkbox" type="checkbox" >
+					</div>
+					<!--20191223-fyx-->
+					<div class="mui-input-row">
+						<label ><span class="mui-icon iconfont icon-xiangqing" style="color: #5CACEE;"></span>备注信息</label>
+						<input id="premark" type="text" value="<%=item.fnote%>"  class="mui-input-clear" >
+					</div>
+					<div class="mui-input-row">
+					    <label><span class="mui-icon iconfont icon-eps-jianyanjieguo" style="color:#5CACEE"></span>检验结果:</label>
+					    <%if(item.result=='合格'){%>
+					    <div class="mui-switch mui-active" id="switchId" data-id="<%=item.id%>">
+					      <div class="mui-switch-handle"></div>
+					    </div>
+					    <%}else{%>
+					      <div class="mui-switch " id="switchId" data-id="<%=item.id%>">
+					        <div class="mui-switch-handle"></div>
+					      </div>
+					    <%}%>
+					</div>
+					<div class="mui-input-row" id="dealDiv">
+						<label ><span class="mui-icon iconfont icon-jieguo" style="color: #5CACEE;"></span>最终结果</label>
+						<%if(item.ffinal_result=='合格'){%>
+						<span class="noodles ncheck" data-code='合格' style="width: 18%;float: left;">合格</span>
+						<%}else{%>
+						  <span class="noodles" data-code='合格' style="width: 18%;float: left;">合格</span>
+						<%}%>
+						<%if(item.ffinal_result=='特采'){%>
+						<span class="noodles ncheck" data-code='特采' style="width: 18%;float: left;">特采</span>
+						<%}else{%>
+						  <span class="noodles" data-code='特采' style="width: 18%;float: left;">特采</span>
+						<%}%>
+						<%if(item.ffinal_result=='退货'){%>
+						<span class="noodles ncheck" data-code='退货' style="width: 18%;float: left;">退货</span>
+						<%}else{%>
+						  <span class="noodles" data-code='退货' style="width: 18%;float: left;">退货</span>
+						<%}%>
+						<!-- <span class="noodles" data-code='合格' style="width: 18%;float: left;">合格</span>
+						<span class="noodles" data-code='特采'style="width: 18%;float: left;">特采</span>
+						<span class="noodles" data-code='退货'style="width: 18%;float: left;">退货</span> -->
+					</div>
+				</form>
+				
+			<% } %>
+		</script>
+		
+        <script id='record-template-2' type="text/template">		
+			<% for(var i in record){ var item=record[i]; %>
+			   <option value='<%=(item)%>'><%=(item)%></option>
+			<% } %>
+		</script>
+			<input type="hidden" id="mid" value="" />
+
+		</div>
+
+		<script type="text/javascript" charset="utf-8">
+			window.addEventListener('refresh', function(e){//执行刷新
+				 getCheckResult();
+			});
+			 window.addEventListener('changeFlot', function(e){
+        　    //获取参数值
+				var flot = e.detail.flot;
+				if(flot){
+					document.getElementById('selectId').value = flot
+					getCheckResult();
+				}
+			});
+			window.addEventListener("changeBar", function(e) {
+				console.log(e.detail.barcode)
+				 mui.openWindow({
+					id: 'IQC_flot',
+					url: 'IQC_flot.html',
+					extras: {
+				    urlId: "/iqcFree/getFlotNo",
+					barcode:e.detail.barcode
+				},
+					waiting: { // 控制 弹出转圈框的信息
+						autoShow: true, //自动显示等待框，默认为true 
+						title: '加载中' //等待对话框上显示的提示内容 
+					}
+				}); 
+			});
+			mui.init();
+			mui.plusReady(function() {
+				//20191111-fyx-打开新的页面选择批次号
+				getFlotNo();
+				
+				document.getElementById('cameraId').addEventListener('tap', function(event) {
+					var mid = document.getElementById('mid').value;
+					if (mid == '' || mid == 'undefined') {
+						mui.toast('请先填写选择检验项目')
+						return;
+					}
+					console.log()
+					mui.openWindow({
+						id: 'IQC_pictrue_add',
+						url: 'IQC_pictrue_add.html?mid=' + mid+'&type=81',
+						waiting: { // 控制 弹出转圈框的信息
+							autoShow: true, //自动显示等待框，默认为true 
+							title: '加载中' //等待对话框上显示的提示内容 
+						}
+					});
+
+				});	
+					
+				
+				mui("#collapseId").on('tap','#switchId',function(){
+					 var itemid = this.getAttribute("data-id");
+					 var va = '不合格'; //不合格
+					 if (this.className.indexOf('mui-active') != -1) {
+					 	va = '合格'; //合格
+					 }
+					 //console.log(va)
+					 saveValues(itemid,va,"FCHECK_RESULT") 
+				}) ;
+				mui("#collapseId").on('tap','.mui-checkbox',function(){
+					var itemid = this.getAttribute("data-id");
+					var filename = this.getAttribute("data-name");
+					var checkbox = this.querySelector('input[type="checkbox"]');  
+                     console.log(checkbox.checked)
+					//console.log(JSON.stringify(this.checked))
+					 var va = '0'; //不合格
+					// console.log(this.checked)
+					 if (!checkbox.checked) {
+					 	va = '1'; //合格
+					 }
+					 saveValues(itemid,va,filename) 
+				}) ;
+				
+				mui("#submitBtn").on("tap", "a", function(event) {
+					var code = this.getAttribute('data-code');
+					doSubmit(code);
+				}) 
+
+			})
+			//保存合格或者不合格信息
+			function saveValues(itemid,va,filename){
+				aj.post("/iqcFree/saveCheckResult", {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							username:api_localStorageGet("code"),
+							pi_pid:itemid,
+							pi_values:va,
+							pi_name:filename
+						}, function (data) {
+							plus.ui.toast(data.msg);
+				});
+			}
+			//
+			function getFlotNo(){
+				document.getElementById('selectId').addEventListener('tap', function(event) {
+					mui.openWindow({
+						id: 'IQC_flot',
+						url: 'IQC_flot.html',
+						extras: {
+                        urlId: "/iqcFree/getFlotNo",
+						barcode:''
+                    },
+						waiting: { // 控制 弹出转圈框的信息
+							autoShow: true, //自动显示等待框，默认为true 
+							title: '加载中' //等待对话框上显示的提示内容 
+						}
+					});
+				
+				});
+			}
+			//获取检验项目
+			function getItem(){
+				//下拉列表改变事件
+				var id = document.getElementById("selectId");
+				id.addEventListener('change',function(){
+				//getCheckitem();
+				getCheckResult();
+				//20191212-fyx-实际批次
+				selectRealFlotNo();
+			});//单一添加下拉改变事件
+			id.onmousedown = function(){//当按下鼠标按钮的时候
+				this.sindex = this.selectedIndex;//把当前选中的值得索引赋给下拉选中的索引
+				this.selectedIndex = -1;//把下拉选中的索引改变为-1,也就是没有!
+			}
+			id.onmouseout = function(){//当鼠标移开的时候
+				var index = id.selectedIndex;//获取下拉选中的索引
+				if(index == -1){//如果为-1,就是根本没有选
+					this.selectedIndex = this.sindex;//就把下拉选中的索引改变成之前选中的值得索引,就默认选择的是之前选中的值
+				}
+				}
+			}
+			function getCheckResult(){
+				var value = document.getElementById('selectId').value; // 选中值
+				if(value == ''){
+					plus.ui.toast('请选择批次号');
+					clearUi()
+					return false;
+				}
+				//console.log(value)
+				aj.post("/iqcFree/getCheckResult", {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							flot_no:value,
+							username:api_localStorageGet("code")
+						}, function (data) {
+					if (data.result) {
+						//console.log(JSON.stringify(data))
+						//console.log(a)
+						document.getElementById('mid').value =data.data.S[0].id;
+						document.getElementById('collapseId').innerHTML = template('form-template', {
+							"record": data.data.S
+						});
+						document.getElementById('pname').value = data.data.S[0].item_name
+						document.getElementById('ptype').value = data.data.S[0].item_model
+						document.getElementById('pxilie').value = data.data.S[0].item_serial
+						//console.log(JSON.stringify(data.data.SS))
+						/* document.getElementById('realSelectId').innerHTML = template('record-template-2', {
+							"record": data.data.SS
+						}); */
+						initDate()
+						if (data.msg.length != 0) {
+							mui.alert(data.msg, '警告', function() {
+								document.getElementById('realSelectId').innerHTML = template('record-template-2', {
+									"record": data.data.SS
+								});
+							});
+						}else{
+							document.getElementById('realSelectId').innerHTML = template('record-template-2', {
+								"record": data.data.SS
+							});
+						}
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+			}
+			function initDate(){
+				mui('.mui-switch')['switch'](); //手动初始化
+				//20191224-fyx
+				document.getElementById("premark").addEventListener("keydown", function(e) {
+					if (13 == e.keyCode) { //点击了“搜索”   
+						//$("#values").focus();获取焦点 
+						document.activeElement.blur(); //隐藏软键盘  
+						doFreeItemField('FNOTE',document.getElementById('premark').value); //这里可以写搜索会触发的逻辑，具体内容根据项目需求
+					}
+				}, false);
+				mui("#dealDiv").on("tap", ".noodles", function(event) {
+					var deal='';
+					//console.log(this.classList[1] != 'ncheck')
+					var dealDiv=document.getElementById("dealDiv"); 
+					var arr = dealDiv.getElementsByClassName("noodles");
+					if(this.classList[1] != 'ncheck'){
+						for(var i=0;i<arr.length;i++){
+							if(arr[i] != this){
+								arr[i].classList.remove('ncheck');
+							}
+						}
+						this.classList.add('ncheck');
+						deal = this.getAttribute('data-code');
+					}else{
+						 for(var i=0;i<arr.length;i++){
+							arr[i].classList.remove('ncheck');
+						} 
+					}
+					doFreeItemField('FFINAL_RESULT',deal);
+				}) 
+			}
+			//20191224-fyx-根据id和字段名保存信息
+			function doFreeItemField(fielname,fielval){
+				var mid = document.getElementById('mid').value;
+				if (mid == '' || mid == 'undefined') {
+					mui.toast('请先填写选择批次号')
+					return;
+				}
+				aj.post("/iqcFree/doFreeItemField", {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							username:api_localStorageGet("code"),
+							pid:mid,
+							fielname:fielname,
+							fielval:fielval
+						}, function (data) {
+							if (data.result) {
+								plus.ui.toast('操作成功');
+							} else {
+								if(fielname == 'FFINAL_RESULT'){
+									var dealDiv=document.getElementById("dealDiv"); 
+									var arr = dealDiv.getElementsByClassName("noodles");
+									for(var i=0;i<arr.length;i++){
+										arr[i].classList.remove('ncheck');
+									} 
+								}
+								plus.ui.toast(data.msg);
+							}
+				});
+			}
+			function selectRealFlotNo(){
+				var id = document.getElementById("realSelectId");
+				id.addEventListener('change',function(){
+					doRealFlotNo();
+				});
+			}
+			function doRealFlotNo() {
+				var obj = document.getElementById('realSelectId'); //定位id
+				var index = obj.selectedIndex; // 选中索引
+				var value = obj.options[index].value; // 选中值
+				var flotId = document.getElementById('mid').value;
+				aj.post("/iqcRegular/doRealFlotNo", {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							username:api_localStorageGet("code"),
+							flotId:flotId,
+							realFlotNo:value
+						}, function (data) {
+					if (data.result) {
+						//getCheckitem()
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+			}
+			//清空数据
+			function clearUi(){
+				document.getElementById('mid').value = '';
+			}
+			function doSubmit(opertype){
+				var mid = document.getElementById('mid').value;
+				if (mid == '' || mid == 'undefined') {
+					mui.toast('请先填写选择批次号')
+					return;
+				}
+				aj.post("/iqcFree/doSumbit", {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							username:api_localStorageGet("code"),
+							pid:mid,
+							opertype:opertype
+						}, function (data) {
+							if (data.result) {
+								plus.ui.toast('操作成功');
+							} else {
+								plus.ui.toast(data.msg);
+							}
+				});
+			}
+			function clicked(url, f1, f2) {
+				mui.openWindow({
+					id: f1,
+					url: url,
+					extras: {
+						urlId:'web/IQC_free.html'
+						//自定义扩展参数，可以用来处理页面间传值 
+					},
+					show: { //控制打开页面的类型
+						autoShow: true,
+						//页面loaded事件发生后自动显示，默认为true 
+						aniShow: 'slide-in-right', //页面显示动画，默认为”slide-in-right“；  页面出现的方式 左右上下
+						duration: '100' //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒； 
+					},
+					waiting: { // 控制 弹出转圈框的信息
+						autoShow: true, //自动显示等待框，默认为true 
+						title: '加载中' //等待对话框上显示的提示内容 
+					}
+				});
+			};
+		</script>
+	</body>
+</html>

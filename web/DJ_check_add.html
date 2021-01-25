@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<style type="text/css">
+			body {}
+			.mui-content {
+				margin-top: 2px;
+			}
+
+			.mui-btn {
+				width: 80px;
+			}
+
+			/** 自定义文字*/
+			.mui-switch {
+				width: 7.5rem;
+			}
+			.mui-switch.mui-active .mui-switch-handle {
+				transform: translate(88px, 0px);
+			}
+			.mui-switch:before {
+				content: '不合格';
+				color: #999;
+			}
+
+			.mui-switch.mui-active:before {
+				content: '合格';
+				color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">点检项目录入</h1>
+		</header>
+		<div class="mui-content" id="divid">
+			<ul class="mui-table-view"> 
+				<li class="mui-table-view-cell mui-collapse">
+					<a class="mui-navigate-right" href="#">详细信息</a>
+					<div class="mui-collapse-content" id="collapseId">
+						<span id="requ" style="background: #E6E6FA"></span>
+					</div>
+				</li>
+			</ul>
+			<form class="mui-input-group" id="formId">
+				<div class="mui-input-row">
+					<label>检验结果:</label>
+					<div class="mui-switch  mui-active" id="vibrationSwitch">
+					  <div class="mui-switch-handle"></div>
+					</div>
+				</div>
+				<div class="mui-input-row" style="height: 7.5rem;">
+					<label>备注说明:</label>
+					<textarea  class="form" rows="5" id="des"></textarea>
+				</div>
+			</form>
+			<div class="mui-content-padded" align="center">
+			    <button type="button" class="mui-btn mui-btn-green" id="subBtn">提交</button>
+			</div>
+			
+		</div>
+		</div>
+
+		<script type="text/javascript" charset="utf-8">
+			mui.init({
+	                    beforeback: function() {　　　　
+	                        var list = plus.webview.currentWebview().opener();　　　　
+	                        mui.fire(list, 'refresh');//refresh是A页面自定义事件
+	                        return true; //返回true,继续页面关闭逻辑
+	                    }
+	                });
+			mui.plusReady(function() {
+				//alert(GetQueryString('did'));
+				//document.getElementById("num").innerHTML = num;
+				aj.post("/pc/getItemDetail", {
+							fid: GetQueryString('did'),
+							mid: GetQueryString('mid')
+						}, function (data) {
+					if (data.result) {
+						var d = data.data[0];
+						document.getElementById('des').innerHTML = d.FNOTE
+						document.getElementById('requ').innerHTML = d.FREQU
+						if(d.FCHECK_RESULT == '合格'){
+							document.getElementById("vibrationSwitch").classList.add('mui-active');
+						}else{
+							document.getElementById("vibrationSwitch").classList.remove('mui-active');
+						}
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+				/* mui.ajax(API.webPath + '/pc/getItemDetail?fid='+GetQueryString('did')+'&mid='+GetQueryString('mid'), {
+					data: {},
+					dataType: 'json',
+					type: 'POST',
+					timeout: 20000,
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+						if (data.result) {
+							var d = data.data[0];
+							document.getElementById('des').innerHTML = d.FNOTE
+							document.getElementById('requ').innerHTML = d.FREQU
+							if(d.FCHECK_RESULT == '合格'){
+								document.getElementById("vibrationSwitch").classList.add('mui-active');
+							}else{
+								document.getElementById("vibrationSwitch").classList.remove('mui-active');
+							}
+						} else {
+							plus.ui.toast(data.msg);
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						plus.ui.toast('获取批次号失败!失败类型是:' + type);
+					}
+				}); */
+				//点击提交
+				document.getElementById("subBtn").addEventListener('tap',function(){
+					saveValues();
+				})
+			});
+			//保存检验结果
+			function saveValues() {
+				var fnode = document.getElementById('des').value;
+				var values = "0";
+				var isActive = document.getElementById("vibrationSwitch").classList.contains("mui-active");
+				if(!isActive){
+					values = "1";//不合格
+				}
+				aj.post("/pc/addCheckResult", {
+							did: GetQueryString('did'),
+							mid: GetQueryString('mid'),
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							username:api_localStorageGet("code"),
+							values:values,
+							fnode:fnode
+						}, function (data) {
+					if (data.result) {
+						plus.ui.toast('修改成功!');
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+				/* mui.ajax(API.webPath + '/pc/addCheckResult?did=' + GetQueryString('did') + '&mid=' + GetQueryString('mid') +
+					'&company='+api_localStorageGet("company")+'&factory='+api_localStorageGet("factory")+
+					'&username='+api_localStorageGet("code")+'&values=' +values+'&fnode=' +fnode, {
+						data: {},
+						dataType: 'json',
+						type: 'POST',
+						timeout: 50000,
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						success: function(data) {
+							if (data.result) {
+								plus.ui.toast('修改成功!');
+							} else {
+								plus.ui.toast(data.msg);
+							}
+						},
+						error: function(xhr, type, errorThrown) {
+							plus.ui.toast('获取批次号失败!失败类型是:' + type);
+						}
+					}); */
+			}
+		</script>
+	</body>
+</html>

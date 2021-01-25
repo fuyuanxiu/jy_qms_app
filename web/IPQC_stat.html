@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/mui.picker.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<script src="../js/mui.picker.min.js"></script>
+		<style type="text/css">
+			.mui-content {
+				margin-top: 2px;
+			}
+			.search {
+				border: 1px solid #e0e0e0;
+				border-radius: 5px;
+				display: flex;
+				width: 100%;
+				align-items: center;
+				margin-top: 10px;
+				/* padding:0px 10px 0;*/
+				background-color: rgba(255, 255, 255, 1);
+				padding-left: 10px;
+				margin-bottom: 10px;
+				height: 40px;
+			}			
+			.search input {
+				margin-bottom: 2px;
+				padding: 0px 0px;
+				background: none;
+			}
+		</style>
+	</head>
+	<body class="mui-fullscreen">
+		<header class="mui-bar mui-bar-nav">
+			<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+				<span class="mui-icon mui-icon-left-nav"></span>
+			</button>
+			<h1 class="mui-title">选批站别</h1>
+		</header>
+		<div class="mui-content">
+			<div class="search">
+				<input type="search"class="mui-input-clear" id="keyword" placeholder="输入关键字查询">
+				<button type="button" data-loading-text="查询中" id="searchBtn" class="mui-btn mui-btn-green mui-icon  mui-icon-plus">点击查询</button>
+			</div>
+			<ul class="mui-table-view" style="margin-top: 2px;" id="list">
+			</ul>
+		<script id='ui-template' type="text/template">
+			<% for(var i in record){ var item=record[i]; %>
+				<li class="mui-table-view-cell" id="huancunLi" data-code= "<%=(item.FCODE)%>" data-name= "<%=(item.FNAME)%>">
+					<a class="mui-navigate-right"><%=(item.FNAME)%></a>
+				</li>
+			<% } %>
+		</script>
+		</div>
+
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+			var urlId = '';
+			mui.plusReady(function() {
+				urlId= plus.webview.currentWebview().urlId;
+				//var record = [{flot_no: '121212'},{flot_no: '4'}];
+				//将数据绑定到界面上
+				getData(plus.webview.currentWebview().stat);
+				//查询
+				document.getElementById('searchBtn').addEventListener('tap', function(event) {
+					//备注不能为空
+					var keyword = document.getElementById('keyword').value;
+					if (keyword == '') {
+						mui.toast('请先填写站别')
+						return;
+					}
+					getData(keyword);
+				});
+				//选中批次号
+				//删除
+				mui("#list").on("tap", "li", function(event) {
+					var i = this.getAttribute('data-name');
+					var a = this.getAttribute('data-code');
+					var view = plus.webview.currentWebview().opener();
+					mui.fire(view,'changeStat',{
+						stat:i,
+						code:a
+					});
+					mui.back()
+				})
+			})
+			function getData(flot){
+				aj.post(urlId, {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							stat:flot
+						}, function (data) {
+					if (data.result) {
+						document.getElementById('list').innerHTML = template('ui-template', {
+							"record": data.data
+						});
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

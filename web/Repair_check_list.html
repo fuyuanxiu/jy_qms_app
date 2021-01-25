@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<style type="text/css">
+			.mui-content {
+				margin-top: 2px;
+			}
+			.font-seal{
+				font-size: 10px;z-index: 2;position: absolute;right:14px;top: 15px;    border: 1px solid #F73A3C;
+				transform: rotate(25deg);width: 43px;line-height: 20px;text-align: center;
+				color: #F73A3C;font-weight: bold;
+			}
+
+		</style>
+	</head>
+	<body class="mui-fullscreen">
+		<header class="mui-bar mui-bar-nav" id="header">
+			<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+				<span class="mui-icon mui-icon-left-nav"></span>
+			</button>
+			<h1 class="mui-title">维修记录</h1>
+		</header>
+		<div class="mui-content" id="contentId">
+			<div class="mui-segmented-control" id="tabId">
+				<!-- <a class="mui-control-item mui-active" href="tab1">
+					维修合格
+				</a>
+				<a class="mui-control-item" href="tab2">
+					报废
+				</a>
+				<a class="mui-control-item" href="tab3">
+					特采
+				</a> -->
+			</div>
+			<div class="mui-content-padded">
+				<div id="tab1" class="mui-control-content mui-active">
+					<!--下拉刷新容器-->
+					<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+					  <div class="mui-scroll">
+						<!--数据列表-->
+						<div id="cardId"></div>
+					  </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script id='tab-template' type="text/template">
+			<% for(var i in record){ var item=record[i]; %>
+			   <%if(i==0){%>
+			   <a class="mui-control-item mui-active" data-href="<%=item%>">
+			   	<%=item%>
+			   </a>
+			   <%}else{%>
+			     <a class="mui-control-item" data-href="<%=item%>">
+			     	<%=item%>
+			     </a>
+			   <%}%>
+			 <% } %>
+		</script>
+		<script id='card-template' type="text/template">
+			<% for(var i in record){ var item=record[i]; %>		  
+			   <div class="mui-card " >
+			    <div class="mui-slider-handle">
+			   	<div class="mui-card-header">		
+			   		批次号:<%=(item.LOT_NO)%>
+			   		<span class="mui-media-object mui-pull-left" style="border-radius: 0%;        display: inline-block;    background: #<%=(item.COLOR)%>;      vertical-align: top;">  
+			   		     <span style="display: block;      height: 20px;        text-align: center"><%=(item.FSTATENAME)%></span>  
+			   		</span>
+			   		
+			   	</div>
+			   	<div class="mui-card-content">
+			   		<div class="mui-input-group">
+			   		    <div class="mui-input-row">
+			   				<label><span class="mui-icon iconfont icon-shuliang" style="color:#5CACEE"></span>维修数量:</label>
+			   				<input type="text" class="mui-input-clear" value="<%=(item.SQTY)%>" disabled="disabled"> 
+			   			</div>
+			   			<div class="mui-input-row" id="dealDiv">
+			   				<label><span class="mui-icon iconfont icon-jieguo" style="color:#5CACEE"></span>维修结果:</label>
+			   					<input type="text" class="mui-input-clear" value="<%=(item.RESULT)%>" disabled="disabled"> 
+			   			</div>
+			   			<div class="mui-input-row" >
+			   				<label ><span class="mui-icon iconfont icon-beizhu" style="color:#5CACEE"></span>备注/说明:</label>
+			   				<textarea  class="form" rows="5" id="des"></textarea>
+			   			</div>
+			   			
+			   		</div>
+			   	</div>
+			   	<!--页脚，放置补充信息或支持的操作-->
+			   	<div class="mui-card-footer"   >
+			   		<a class="mui-card-link"><%=(item.FDATE)%></a>
+					<button id="delBtn" type="button" class="mui-btn mui-btn-danger" data-id='<%=(item.FID)%>' >删除</button>
+			   	</div>
+			   </div>
+			   </div>
+			<% } %>
+		</script>
+
+		<script type="text/javascript" charset="utf-8">
+			mui.init({
+	                    beforeback: function() {　　　　
+	                        var list = plus.webview.currentWebview().opener();　　　　
+	                        mui.fire(list, 'refresh');//refresh是A页面自定义事件
+	                        return true; //返回true,继续页面关闭逻辑
+	                    }
+	                });
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {//下拉刷新
+						auto:true,//可选,默认false.自动下拉刷新一次
+						contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: pulldownRefresh
+					}, 
+					up: {//上拉加载
+						//auto:true,//可选,默认false.自动上拉加载一次
+						contentrefresh: '正在加载...',
+						contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+						callback: pullupRefresh
+					}
+				}
+			});
+			mui.plusReady(function() {
+				addTabTap();
+				toList(1,2);
+			})
+			var record = ['维修合格','报废','特采'];var curTab = record[0];
+			function addTabTap(){
+				document.getElementById('tabId').innerHTML = template('tab-template', {
+					"record": record
+				});
+				mui('#tabId').on('tap', 'a', function(event) {
+					curTab =this.getAttribute('data-href');
+					document.getElementById('cardId').innerHTML = template('card-template', {
+						"record": []
+					});
+					toList(1,2);
+					});
+			}
+			var count = 1;
+			function pulldownRefresh(){
+				  count=1;//第一页
+				  type=1;//代表下拉刷新
+				  toList(count,type);//具体取数据的方法
+			}
+			function pullupRefresh(){
+				//setTimeout(function() {
+				count++;//翻下一页
+				type=2;//代表上拉加载
+				toList(count,type);//具体取数据的方法
+			//}, 100);
+			}
+			function toList(page,type){
+				/* plus.nativeUI.showWaiting("等待中....",{padlock: true});//数据出来前显示等待加载框
+				var url = API.webPath + '/repair/getList?page='+page+'&result='+curTab; */
+				aj.post("/repair/getList", {
+							page: page,
+							result: curTab
+						}, function (data) {
+					if (data.result) {
+						if(type==2){//下拉加载
+							if(data.data.length > 0){
+								var html = document.getElementById("cardId").innerHTML;
+								document.getElementById('cardId').innerHTML = html+template('card-template', {
+									"record": data.data
+								});
+								
+							}
+							mui('#pullrefresh').pullRefresh().endPulldownToRefresh();//结束下拉刷新
+							 /*结束上拉加载，并根据情况切换“下拉显示更多数据”，以及“没有更多数据了”。执行endPullupToRefresh()方法，结束转雪花进度条的“正在加载...”过程,若还有更多数据，则传入false; 否则传入true，之后滚动条滚动到底时*/
+							 if(data.data.length > 0){
+								 mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+							 } else {
+								 mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+							 }
+						}
+						if(type==1){//上拉刷新
+							  /*下面这句很关键！*/
+							  mui('#pullrefresh').pullRefresh().refresh(true);//有重新触发上拉加载的需求（比如当前类别已无更多数据，但切换到另外一个类别后，应支持继续上拉加载）
+							  //vm.companylist = data.company_list;
+							  //plus.nativeUI.closeWaiting();//数据渲染完毕，关闭加载框
+							  mui.currentWebview.show(); //显示当前页面
+								 var html = document.getElementById("ul").innerHTML;
+								 document.getElementById('ul').innerHTML = html+template('li-template', {
+									"record":data.data.List
+								 });
+						 }
+						 tapDelete();
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+			}
+			function tapDelete(){
+				mui("#cardId").on('tap','#delBtn',function(){
+					var elem = this;
+					var li = elem.parentNode.parentNode;
+					var btnArray = ['确认', '取消'];
+					mui.confirm('确认删除该条记录？', '系统提示', btnArray, function(e) {
+						if (e.index == 0) {
+							li.parentNode.removeChild(li);
+							//console.log(elem.getAttribute('data-id'))
+							doDelete(elem.getAttribute('data-id'));
+						} else {
+							setTimeout(function() {
+								$.swipeoutClose(li);
+							}, 0);
+						}
+					});
+				});
+			}
+			function doDelete(ngid){
+				  aj.post("/repair/saveRepair", {
+				  			factory: api_localStorageGet("factory"),
+				  			company: api_localStorageGet("company"),
+				  			ngid:ngid,
+							fstate:'',
+							usercode:api_localStorageGet("code"),
+							deal:'',
+							qty:'',
+							note:'',
+							barcode:''
+				  		}, function (data) {
+				  	if (data.result) {
+				  		plus.ui.toast(data.msg);
+				  	} else {
+				  		plus.ui.toast(data.msg);
+				  	}
+				  });
+			}
+		</script>
+	</body>
+</html>

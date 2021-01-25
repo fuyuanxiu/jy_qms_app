@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/mui.picker.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<script src="../js/mui.picker.min.js"></script>
+		<style type="text/css">
+			.mui-content {
+				margin-top: 2px;
+			}
+
+			/*标题中图标居右侧的css样式*/
+			.title-right {
+				float: right;
+				line-height: 44px !important;
+				position: absolute;
+				display: block;
+				width: 100%;
+				margin: 0 0px !important;
+				padding: 0 !important;
+				text-align: center;
+				white-space: nowrap;
+				color: #000;
+				display: inline-block;
+				overflow: hidden;
+				width: auto;
+				margin: 0;
+				text-overflow: ellipsis;
+				--color: #de1312;
+			}
+
+			.mui-badge1 {
+				padding: 0px;
+				width: 65%;
+				float: right;
+				line-height: 42px;
+				font-size: 14px;
+			}
+
+			.mui-popup-title {
+				color: red;
+			}
+			
+			.font-seal {
+				font-size: 10px;z-index: 2;position: absolute;right:14px;top: 15px;    border: 1px solid #F73A3C;
+				transform: rotate(25deg);width: 43px;line-height: 20px;text-align: center;color: #F73A3C;font-weight: bold;
+			}
+			
+			/** 自定义文字*/
+			.mui-switch {
+				width: 120px;
+			}
+			
+			.mui-switch.mui-active .mui-switch-handle {
+				transform: translate(88px, 0px);
+			}
+			
+			.mui-switch:before {
+				content: '不合格';
+				color: #999;
+			}
+			
+			.mui-switch.mui-active:before {
+				content: '合格';
+				color: #fff;
+			}
+			.ulcss {
+				padding: 5px 5px;
+			}
+			
+			.ulcss a {
+				border: solid 1px #FFFFF;
+				background-color: #E6E6FA;
+				--border-radius: 30px;
+				border-top-left-radius: 20px;
+				border-bottom-left-radius: 20px;
+				border-bottom-right-radius: 20px;
+			}
+			.acss a{
+				text-align: center;
+				color: #fff;
+				text-decoration: none;
+				background-color: rgb(255, 145, 0);
+			}
+			.type{
+			    width: 100%;
+			   /* height: 4.0625rem; */
+			    border-bottom: 1px solid #EEEEEE;
+			    align-items: center;
+			    display: flex;
+			}
+			.clearfix:after {
+			    display: block;
+			    overflow: hidden;
+			    clear: both;
+			    height: 0;
+			    visibility: hidden;
+			    content: "";
+			}
+			.close {
+				position: absolute;
+				top: 0;
+				right: 0;
+				z-index: 99;
+				color: red;
+			}
+			.noodles{
+			    display: inline-block;
+			    padding: 0.125rem;
+			    border:1px rgb(255, 145, 0) dashed;
+			    margin: 0.3125rem;
+			}
+			.ncheck{
+				background:#FFA54F;
+			}
+		</style>
+	</head>
+	<body class="mui-fullscreen">
+		<header class="mui-bar mui-bar-nav">
+			<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+				<span class="mui-icon mui-icon-left-nav"></span>
+			</button>
+			<h1 class="mui-title">维修结果录入</h1>
+			<span class="title-right mui-icon mui-icon-list" style="color:#0062CC" id="moreId"></span>
+		</header>
+		<div class="mui-content">
+			<div class="mui-input-group">
+				<div class="mui-input-row">
+					<label onclick="clicked('commom/saomiao.html','saomiao',true);"><span class="mui-icon iconfont icon-saomiao" id="num1"  style="color:#5CACEE"></span>批次号</label>
+					<a class="mui-navigate-right">
+						<span class="mui-badge1">
+							<select class="mui-h5" style="margin:auto; color:#000;" id="selectId" >
+								<option value="">请点击选择批次号</option>
+								<!-- <option value="1">津</option> -->
+							</select>
+						</span>
+					</a>
+				</div>
+				<!-- <div id="cardId"></div> -->
+				<div class="mui-content" id="contentId">
+					<!--下拉刷新容器-->
+					<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+					  <div class="mui-scroll">
+						<!--数据列表-->
+						<div id="cardId"></div>
+					  </div>
+					</div>
+				</div>
+			<script id='record-template' type="text/template">
+				<option value="">请点击选择批次号</option>
+			<% for(var i in record){ var item=record[i]; %>
+			   <option  value='<%=(item.VALUES)%>'><%=(item.VALUES)%></option>
+			<% } %>
+		</script>
+		
+		<script id='card-template' type="text/template">
+			<% for(var i in record){ var item=record[i]; %>
+			   <div class="mui-card" >
+			   	<div class="mui-card-header">		
+			   		批次号:<%=(item.LOT_NO)%>
+			   		<span class="mui-media-object mui-pull-left" style="border-radius: 0%;        display: inline-block;    background: #<%=(item.COLOR)%>;      vertical-align: top;">  
+			   		     <span style="display: block;      height: 20px;        text-align: center"><%=(item.FSTATENAME)%></span>  
+			   		</span>
+			   		
+			   	</div>
+			   	<div class="mui-card-content">
+			   		<div class="mui-input-group">
+			   		    <div class="mui-input-row">
+			   				<label><span class="mui-icon iconfont icon-shuliang" style="color:#5CACEE"></span>维修数量:</label>
+			   				<!-- <input type="text" class="mui-input-clear" value="1" > -->
+			   				<div id="qty" class="mui-numbox" style="width: 12.5rem;" data-numbox-step='1' data-numbox-min='1' data-numbox-max='<%=(item.SQTY)%>'>
+			   					<button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+			   					<input class="mui-input-numbox" type="number" value="<%=(item.SQTY)%>"/>
+			   					<button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+			   				</div>
+			   			</div>
+			   			<div class="mui-input-row" id="dealDiv">
+			   				<label><span class="mui-icon iconfont icon-jieguo" style="color:#5CACEE"></span>维修结果:</label>
+			   					<span class="noodles ncheck" data-code='维修合格'>维修合格</span>
+			   					<span class="noodles" data-code='报废'>报废</span>
+			   					<span class="noodles" data-code='特采'>特采</span>
+			   			</div>
+			   			<div class="mui-input-row" >
+			   				<label ><span class="mui-icon iconfont icon-beizhu" style="color:#5CACEE"></span>备注/说明:</label>
+			   				<textarea  class="form" rows="5" id="des"></textarea>
+			   			</div>
+			   			
+			   		</div>
+			   	</div>
+			   	<!--页脚，放置补充信息或支持的操作-->
+			   	<div class="mui-card-footer"   >
+			   		<a class="mui-card-link"><%=(item.FDATE)%></a>
+			   		<button id="saveBtn" type="button" class="mui-btn mui-btn-success" data-qty='<%=(item.SQTY)%>' data-id='<%=(item.FID)%>' data-stat='<%=(item.FSTATE)%>' data-lot='<%=(item.LOT_NO)%>'>完成</button>
+			   	</div>
+			   </div>
+			<% } %>
+		</script>
+
+		</div>
+
+		<script type="text/javascript" charset="utf-8">
+			window.addEventListener('refresh', function(e){//执行刷新
+				 //getCheckitem();
+				 document.getElementById('cardId').innerHTML = template('card-template', {
+				 	"record": []
+				 });
+				 getUnList(1,1);
+			});
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {//下拉刷新
+						auto:true,//可选,默认false.自动下拉刷新一次
+						contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: pulldownRefresh
+					}, 
+					up: {//上拉加载
+						//auto:true,//可选,默认false.自动上拉加载一次
+						contentrefresh: '正在加载...',
+						contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+						callback: pullupRefresh
+					}
+				}
+			});
+			var count = 1;
+			function pulldownRefresh(){
+				  count=1;//第一页
+				  type=1;//代表下拉刷新
+				  getUnList(count,type);//具体取数据的方法
+			}
+			function pullupRefresh(){
+				//setTimeout(function() {
+				count++;//翻下一页
+				type=2;//代表上拉加载
+				getUnList(count,type);//具体取数据的方法
+			//}, 100);
+			}
+			mui.plusReady(function() {
+				getItem()
+				//getStat();
+				getUnList(1,1);
+				
+				addSaveBtnTap();
+				addDealTap();
+				//var record = [{flot_no: '121212'},{flot_no: '4'}];
+				//将数据绑定到界面上
+				//var url = API.webPath + '/repair/getLotList?factory='+api_localStorageGet("factory")+'&company='+api_localStorageGet("company")
+				aj.post("/repair/getLotList", {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company")
+						}, function (data) {
+					if (data.result) {
+						document.getElementById('selectId').innerHTML = template('record-template', {
+							"record": data.data
+						});
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+				/* mui.ajax(url, {
+					data: {},
+					dataType: 'json',
+					type: 'POST',
+					timeout: 10000,
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+						if (data.result) {
+							document.getElementById('selectId').innerHTML = template('record-template', {
+								"record": data.data
+							});
+						} else {
+							plus.ui.toast(data.msg);
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						plus.ui.toast('获取批次号失败!失败类型是:' + type);
+					}
+				}); */
+				// window.addEventListener("changeBar", function(e) {
+				// 	//console.log(e.detail.barcode);
+				// 	document.getElementById('cardId').innerHTML = template('card-template', {
+				// 							"record": []
+				// 						});
+				// 	getUnListUrl(1,1,e.detail.barcode);
+				// });
+				document.getElementById('moreId').addEventListener('tap', function(event) {
+					mui.openWindow({
+						id: 'Repair_check_list',
+						url: 'Repair_check_list.html',
+						waiting: { // 控制 弹出转圈框的信息
+							autoShow: true, //自动显示等待框，默认为true 
+							title: '加载中' //等待对话框上显示的提示内容 
+						}
+					});
+
+				});
+
+			})
+			//获取检验项目
+			function getItem(){
+				//下拉列表改变事件
+				var id = document.getElementById("selectId");
+				id.addEventListener('change',function(){
+					document.getElementById('cardId').innerHTML = template('card-template', {
+						"record": []
+					});
+				   getUnList(1,1);
+			});//单一添加下拉改变事件
+			id.onmousedown = function(){//当按下鼠标按钮的时候
+				this.sindex = this.selectedIndex;//把当前选中的值得索引赋给下拉选中的索引
+				this.selectedIndex = -1;//把下拉选中的索引改变为-1,也就是没有!
+			}
+			id.onmouseout = function(){//当鼠标移开的时候
+				var index = id.selectedIndex;//获取下拉选中的索引
+				if(index == -1){//如果为-1,就是根本没有选
+					this.selectedIndex = this.sindex;//就把下拉选中的索引改变成之前选中的值得索引,就默认选择的是之前选中的值
+				}
+				}
+			}
+			function getUnListUrl(page,type,barcode){
+				aj.post("/repair/getUnList", {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							lot_no:barcode,
+							page:page
+						}, function (data) {
+					if (data.result) {
+						if(type==2){//下拉加载
+							if(data.data.length > 0){
+								var html = document.getElementById("cardId").innerHTML;
+								document.getElementById('cardId').innerHTML = html+template('card-template', {
+									"record": data.data
+								});
+								//addSaveBtnTap();
+								mui('.mui-numbox').numbox();
+								//addDealTap();
+							}
+							mui('#pullrefresh').pullRefresh().endPulldownToRefresh();//结束下拉刷新
+							 /*结束上拉加载，并根据情况切换“下拉显示更多数据”，以及“没有更多数据了”。执行endPullupToRefresh()方法，结束转雪花进度条的“正在加载...”过程,若还有更多数据，则传入false; 否则传入true，之后滚动条滚动到底时*/
+							 if(data.data.length > 0){
+								 mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+							 } else {
+								 mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+							 }
+						}
+						if(type==1){//上拉刷新
+							  /*下面这句很关键！*/
+							  mui('#pullrefresh').pullRefresh().refresh(true);//有重新触发上拉加载的需求（比如当前类别已无更多数据，但切换到另外一个类别后，应支持继续上拉加载）
+							  //vm.companylist = data.company_list;
+							  //plus.nativeUI.closeWaiting();//数据渲染完毕，关闭加载框
+							  mui.currentWebview.show(); //显示当前页面
+								 var html = document.getElementById("cardId").innerHTML;
+								 document.getElementById('cardId').innerHTML = template('card-template', {
+								 	"record": data.data
+								 });
+								 //addSaveBtnTap();
+								 mui('.mui-numbox').numbox();
+								 //addDealTap();
+						 }
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+				//var url = API.webPath + '/repair/getUnList?factory='+api_localStorageGet("factory")+'&company='+api_localStorageGet("company")+'&lot_no=' + barcode+'&page='+page
+				/*mui.ajax(url, {
+					data: {},
+					dataType: 'json',
+					type: 'POST',
+					timeout: 10000,
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+						if (data.result) {
+							
+							if(type==2){//下拉加载
+								if(data.data.length > 0){
+									var html = document.getElementById("cardId").innerHTML;
+									document.getElementById('cardId').innerHTML = html+template('card-template', {
+										"record": data.data
+									});
+									//addSaveBtnTap();
+									mui('.mui-numbox').numbox();
+									//addDealTap();
+								}
+								mui('#pullrefresh').pullRefresh().endPulldownToRefresh();//结束下拉刷新
+
+								 if(data.data.length > 0){
+									 mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+								 } else {
+									 mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+								 }
+							}
+							if(type==1){//上拉刷新
+								  
+								  mui('#pullrefresh').pullRefresh().refresh(true);//有重新触发上拉加载的需求（比如当前类别已无更多数据，但切换到另外一个类别后，应支持继续上拉加载）
+								  //vm.companylist = data.company_list;
+								  //plus.nativeUI.closeWaiting();//数据渲染完毕，关闭加载框
+								  mui.currentWebview.show(); //显示当前页面
+									 var html = document.getElementById("cardId").innerHTML;
+									 document.getElementById('cardId').innerHTML = template('card-template', {
+									 	"record": data.data
+									 });
+									 //addSaveBtnTap();
+									 mui('.mui-numbox').numbox();
+									 //addDealTap();
+							 }
+							 
+						} else {
+							plus.ui.toast(data.msg);
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						plus.ui.toast('获取批次号失败!失败类型是:' + type);
+					}
+				}); */
+			}
+			function getUnList(page,type) {
+				var obj = document.getElementById('selectId'); //定位id
+				var index = obj.selectedIndex; // 选中索引
+				var value = obj.options[index].value; // 选中值
+				console.log(value)
+				getUnListUrl(page,type,value)
+			}
+			//清空数据
+			function clearUi(){
+				document.getElementById('mid').value = '';
+			}
+			function clicked(url, f1, f2) {
+				mui.openWindow({
+					id: f1,
+					url: url,
+					extras: {
+						urlId:'web/Repair_check_new.html'
+						//自定义扩展参数，可以用来处理页面间传值 
+					},
+					show: { //控制打开页面的类型
+						autoShow: true,
+						//页面loaded事件发生后自动显示，默认为true 
+						aniShow: 'slide-in-right', //页面显示动画，默认为”slide-in-right“；  页面出现的方式 左右上下
+						duration: '100' //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒； 
+					},
+					waiting: { // 控制 弹出转圈框的信息
+						autoShow: true, //自动显示等待框，默认为true 
+						title: '加载中' //等待对话框上显示的提示内容 
+					}
+				});
+			};
+			var bc = '';
+			function addDealTap(){
+				mui("#cardId").on('tap','.noodles',function(){
+				//mui("#dealDiv").on("tap", ".noodles", function(event) {
+					//console.log(this.classList[1] != 'ncheck')
+					//var dealDiv=document.getElementById("dealDiv"); 
+					var dealDiv = this.parentNode
+					var arr = dealDiv.getElementsByClassName("noodles");
+					if(this.classList[1] != 'ncheck'){
+						for(var i=0;i<arr.length;i++){
+							if(arr[i] != this){
+								arr[i].classList.remove('ncheck');
+							}
+						}
+						this.classList.add('ncheck');
+						deal = this.getAttribute('data-code');
+					}else{
+						for(var i=0;i<arr.length;i++){
+							arr[i].classList.remove('ncheck');
+							console.log(arr[i].classList)
+						}
+					}
+				}) 
+				}
+			function addSaveBtnTap(){
+				mui("#cardId").on('tap','#saveBtn',function(){
+					console.log('saveBtn')
+				  //获取id
+				  var elem = this;
+				  var li = elem.parentNode.parentNode;
+				  
+				  var stat  = this.getAttribute("data-stat");
+				  var lot_no  = this.getAttribute("data-lot");
+				  var allQty = this.getAttribute("data-qty");
+				  var qty = this.parentNode.parentNode.querySelectorAll(".mui-input-numbox")[0].value;
+				  var note = this.parentNode.parentNode.querySelectorAll("#des")[0].value;
+				  var deal = this.parentNode.parentNode.querySelectorAll(".noodles.ncheck")[0].innerText;
+				  
+				  /* var url = API.webPath + '/repair/saveRepair?ngid=&company='+api_localStorageGet("company")+'&factory='+api_localStorageGet("factory")+
+				  '&fstate='+stat+'&usercode='+api_localStorageGet("code")+
+				  '&deal='+deal+'&qty='+qty+'&note='+note+'&barcode='+lot_no; */
+				 // console.log(url)
+				  aj.post("/repair/saveRepair", {
+					  ngid:'',
+				  			factory: api_localStorageGet("factory"),
+				  			company: api_localStorageGet("company"),
+				  			fstate:stat,
+							usercode:api_localStorageGet("code"),
+							deal:deal,
+							qty:qty,
+							note:note,
+							barcode:lot_no
+				  		}, function (data) {
+				  	if (data.result) {
+				  		plus.ui.toast(data.msg);
+				  		document.getElementById('cardId').innerHTML = template('card-template', {
+				  			"record": []
+				  		});
+				  		getUnList(1,1);
+				  	} else {
+				  		plus.ui.toast(data.msg);
+				  	}
+				  });
+/* 				  mui.ajax(url, {
+				  	data: {},
+				  	dataType: 'json',
+				  	type: 'POST',
+				  	timeout: 20000,
+				  	headers: {
+				  		'Content-Type': 'application/json'
+				  	},
+				  	success: function(data) {
+				  		plus.ui.toast(data.msg);
+						document.getElementById('cardId').innerHTML = template('card-template', {
+							"record": []
+						});
+						getUnList(1,1);
+						//getUnListUrl(1,1,lot_no);
+				  	},
+				  	error: function(xhr, type, errorThrown) {
+				  		plus.ui.toast('获取数据失败!失败类型是:' + type);
+				  	}
+				  }); */
+				  
+				}) 
+			/* 	document.getElementById('saveBtn').addEventListener('tap', function(event) {
+					if(beforeSubmit()){
+						var qty = mui('#qty').numbox().getValue();
+						var note = document.getElementById('des').value;
+						
+						var url = API.webPath + '/repair/saveRepair?ngid=&company='+api_localStorageGet("company")+'&factory='+api_localStorageGet("factory")+
+						'&fstate='+stat+'&usercode='+api_localStorageGet("code")+
+						'&deal='+deal+'&qty='+qty+'&note='+note+'&barcode='+bc;
+						mui.ajax(url, {
+							data: {},
+							dataType: 'json',
+							type: 'POST',
+							timeout: 20000,
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							success: function(data) {
+								plus.ui.toast(data.msg);
+							},
+							error: function(xhr, type, errorThrown) {
+								plus.ui.toast('获取数据失败!失败类型是:' + type);
+							}
+						});
+					}
+				}) */
+			}	
+			function saveBtn(){
+				
+			}
+			
+			
+		</script>
+	</body>
+</html>

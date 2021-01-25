@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<script src="js/DJ_check.js"></script>
+		<style type="text/css">
+			.mui-content {
+				margin-top: 2px;
+			}
+			/*标题中图标居右侧的css样式*/
+			.title-right {
+				float: right;
+				line-height: 44px !important;
+				position: absolute;
+				display: block;
+				width: 100%;
+				margin: 0 0px !important;
+				padding: 0 !important;
+				text-align: center;
+				white-space: nowrap;
+				color: #000;
+				display: inline-block;
+				overflow: hidden;
+				width: auto;
+				margin: 0;
+				text-overflow: ellipsis;
+				--color: #de1312;
+			}
+			.mui-badge1 {
+				padding: 0px;
+				width: 65%;
+				float: right;
+				line-height: 42px;
+				font-size: 14px;
+			}
+			.close {
+				position: absolute;
+				top: 0.1875rem;
+				right: 0.4375rem;
+				z-index: 99;
+			}
+			
+			 .product{
+            margin-top: 4.375rem;  
+        }
+        .productBox {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 15px 15px 0 0;
+        }
+        .productConten {
+            margin-bottom: 1rem;
+        }
+
+        .product-delcom {
+            padding: 0.24rem 7%;
+             color: #323232; 
+            font-size: 0.6875rem;
+            /* border-bottom: 1px solid #EEEEEE;  */
+        }
+        .type{
+            width: 100%;
+           /* height: 4.0625rem; */
+            border-bottom: 1px solid #EEEEEE;
+            align-items: center;
+            display: flex;
+        }
+        .noodles{
+            display: inline-block;
+            padding: 5px 10px;
+            border:1px rgb(255, 145, 0) dashed;
+            margin: 0.3125rem;
+        }
+		.ncheck{
+			background:#FFA54F;
+		}
+		.ndis{
+			display:none;
+		}
+        
+        .clearfix:after {
+            display: block;
+            overflow: hidden;
+            clear: both;
+            height: 0;
+            visibility: hidden;
+            content: "";
+        }
+        .product-img{
+            float:left;
+            width: 30%;
+        }
+        .product-text{
+            float:left;
+            width: 70%;
+        }
+        .type-left{
+            float:left;
+        }
+        .type-right{
+            float: right;
+            width: 120px;
+        }
+
+        .product-footer {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex: 1;
+            -webkit-box-flex: 1;
+            flex: 1;
+            line-height: 1rem;
+            text-align: center;
+        }
+
+        .product-footer a {
+            border-radius: 5px;
+            -webkit-flex: 1;
+            -webkit-box-flex: 1;
+            flex: 1;
+            color: #fff;
+            font-size: 0.3rem;
+            text-decoration: none;
+            background-color: rgb(255, 145, 0);
+            padding: 5px;
+            margin: 10px 20px;
+        }
+		.font-seal {
+			font-size: 10px;z-index: 2;position: absolute;right:14px;top: 15px;    border: 1px solid #F73A3C;
+			transform: rotate(25deg);width: 43px;line-height: 20px;text-align: center;color: #F73A3C;font-weight: bold;
+		}
+
+		</style>
+	</head>
+	<body class="mui-fullscreen">
+		<header class="mui-bar mui-bar-nav">
+			<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+				<span class="mui-icon mui-icon-left-nav"></span>
+			</button>
+			<h1 class="mui-title">点检录入</h1>
+			<span class="title-right mui-icon mui-icon-camera" style="color:#0062CC" id="cameraId"></span>
+		</header>
+		<div class="mui-content">
+			<div class="mui-input-group">
+				<div class="mui-input-row mui-content-padded">
+					<label ><span class="mui-icon iconfont icon-jihua" style="color:#15aa0d"></span>点检方案</label>
+					<a class="mui-navigate-right" id="popId">
+						<span class="mui-badge1" id="spanId">请点击选择</span>
+					</a>
+				</div>
+			</div>
+			<input type="hidden" id="mid" value="" />
+			<ul class="mui-table-view" id="ulId">
+			</ul>
+<script id='ui-template' type="text/template">
+				<% for(var i in record){ var item=record[i];var n = i>10?i%10:i; var colors=['99CCFF','FFCC33','FFFF33','FFCC00','66CC00','FFFF99','FF9900','FFFF00','0099CC','FFCC00','CCCC00'];var c=colors[n]; %>
+
+				<li class="mui-table-view-cell mui-media">
+			        <a href="javascript:;" class="mui-navigate-right" data-id="<%=(item.ID)%>"  mid="<%=(item.MID)%>">
+					{{if item.FCHECK_RESULT=='合格'}}
+					<div class="font-seal" style="color: #4CD964;border: 1px solid #4CD964"><%=(item.FCHECK_RESULT)%></div>
+					{{else if item.FCHECK_RESULT=='不合格'}}
+					<div class="font-seal"><%=(item.FCHECK_RESULT)%></div>
+					{{else}}
+					{{/if}}
+					<span class="mui-media-object mui-pull-left" style="border-radius: 50%;    height: 20px;    width: 20px;    display: inline-block;    background: #<%=(c)%>;      vertical-align: top;">  
+					     <span style="display: block;    color: #FFFFFF;    height: 20px;    line-height: 20px;    text-align: center"><%=(++i)%></span>  
+					</span>
+			            <div class="mui-media-body"> 
+						<%=(item.FREQU)%>
+			                <p class='mui-ellipsis'></p>
+			            </div>
+			        </a>
+			    </li>
+			<% } %>
+		</script>
+		</div>
+
+    <div id="picture" class="mui-popover mui-popover-action mui-popover-bottom" >
+		<div><h1 class="mui-title">请选择</h1></div>
+        <div class="productBox">
+			<div class="close"><span class="mui-icon iconfont icon-guanbi"></span></div>
+            <div class="productConten">
+                <div class="product-delcom">
+                    <div class="type" >
+                        <p>站别</p>
+						<div class="mui-row">
+						    <div class="mui-col-sm-12 mui-col-xs-12" id="statDiv">
+							</div>
+						</div>
+                        <!-- <span class="noodles">外层</span> <span class="rice">图电</span><span class="rice">蚀刻</span> -->
+                    </div>
+                    <div class="type">
+                        <p>线体</p>
+						<div class="mui-row">
+						    <div class="mui-col-sm-12 mui-col-xs-12" id="lineDiv">
+							</div>
+						</div>
+                    </div>
+					<div class="type clearfix">
+					    <p>点检方案</p>
+						<div class="mui-row">
+						    <div class="mui-col-sm-12 mui-col-xs-12" id="projectDiv">
+							</div>
+						</div>
+					</div>
+					<div class="type clearfix">
+					    <p>点检单号</p>
+						<div class="mui-row">
+						    <div class="mui-col-sm-12 mui-col-xs-12" id="billDiv">
+							</div>
+						</div>
+					</div>
+                </div>
+            </div>
+            <div class="product-footer">
+                <a href="javascript:" id="submitBtn">提交</a>
+            </div>
+        </div>
+		<script id='stat-template' type="text/template">
+			<% for(var i in record){ var item=record[i]; %>
+			   <label class="noodles" data-code='<%=(item.FCODE)%>'><%=(item.FNAME)%></label>
+			<% } %>
+		</script>
+
+		<script type="text/javascript" charset="utf-8">
+			var code='';var fline='';var fpro='';var bill='';
+			mui.init();
+			window.addEventListener('refresh', function(e){//执行刷新
+			mui('#picture').popover('toggle');
+				 doSubmit();
+			});
+			mui.plusReady(function() {
+				document.getElementById('popId').addEventListener('tap', function(event) {
+					var l = document.querySelectorAll("#statDiv label")
+					if (l.length > 0) {
+						mui('#picture').popover('show');
+					}else{
+						getStatList();
+					}
+					//mui('#picture').popover('show');
+				});
+				//删除
+				mui("#picture").on("tap", ".close", function(event) {
+					mui('#picture').popover('toggle');
+				})
+				//提交
+				document.getElementById('submitBtn').addEventListener('tap', function(event) {
+					doSubmit();
+				});
+				addStatTap();
+				addLineTap();
+				addProjecTap();
+				addBillTap();
+			})
+			function doSubmit(){
+				if(fpro == ''){
+					plus.ui.toast('请先选择点检方案');
+					return false;
+				}
+				mui('#picture').popover('toggle');
+				aj.post("/pc/getItemList", {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							pno:bill,
+							fstate:code,
+							fline:fline,
+							fpro:fpro,
+							usercode:api_localStorageGet("code")
+						}, function (data) {
+					if (data.result) {
+						document.getElementById('ulId').innerHTML = template('ui-template', {
+							"record": data.data
+						});
+						document.getElementById("spanId").innerHTML = fpro+' '+data.data[0].CD;
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+				/* mui.ajax(API.webPath + '/pc/getItemList?pno='+bill+'&company='+api_localStorageGet("company")+'&factory='+api_localStorageGet("factory")+
+				'&fstate='+code+'&fline='+fline+'&fpro='+fpro+'&usercode='+api_localStorageGet("code"), {
+					data: {},
+					dataType: 'json',
+					type: 'POST',
+					timeout: 20000,
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+						if (data.result) {
+							document.getElementById('ulId').innerHTML = template('ui-template', {
+								"record": data.data
+							});
+							document.getElementById("spanId").innerHTML = fpro+' '+data.data[0].CD;
+						} else {
+							plus.ui.toast(data.msg);
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						plus.ui.toast('获取数据失败!失败类型是:' + type);
+					}
+				}); */
+			}
+			
+			mui("#ulId").on("tap", "a", function() {
+				var id = this.getAttribute('data-id');
+				var url = 'DJ_check_add.html?did=' + id+ '&mid=' + this.getAttribute('mid');
+				mui.openWindow({
+					id: id,
+					url: url,
+					extras: {
+						//自定义扩展参数，可以用来处理页面间传值 
+					},
+					waiting: { // 控制 弹出转圈框的信息
+						autoShow: true, //自动显示等待框，默认为true 
+						title: '加载中' //等待对话框上显示的提示内容 
+					}
+				});
+			})
+		</script>
+	</body>
+</html>

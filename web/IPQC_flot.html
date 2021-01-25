@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/mui.picker.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<script src="../js/mui.picker.min.js"></script>
+		<style type="text/css">
+			.mui-content {
+				margin-top: 2px;
+			}
+			.search {
+				border: 1px solid #e0e0e0;
+				border-radius: 5px;
+				display: flex;
+				width: 100%;
+				align-items: center;
+				margin-top: 10px;
+				/* padding:0px 10px 0;*/
+				background-color: rgba(255, 255, 255, 1);
+				padding-left: 10px;
+				margin-bottom: 10px;
+				height: 40px;
+			}			
+			.search input {
+				margin-bottom: 2px;
+				padding: 0px 0px;
+				background: none;
+			}
+		</style>
+	</head>
+	<body class="mui-fullscreen">
+		<header class="mui-bar mui-bar-nav">
+			<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+				<span class="mui-icon mui-icon-left-nav"></span>
+			</button>
+			<h1 class="mui-title">选批次号</h1>
+		</header>
+		<div class="mui-content">
+			<div class="search">
+				<input type="search"class="mui-input-clear" id="keyword" placeholder="输入关键字查询">
+				<button type="button" data-loading-text="查询中" id="searchBtn" class="mui-btn mui-btn-green mui-icon  mui-icon-plus">点击查询</button>
+			</div>
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+				<div  class="mui-scroll">
+					<ul class="mui-table-view" style="margin-top: 2px;" id="list">
+					</ul>
+				</div>
+			</div>
+			
+			
+		<script id='ui-template' type="text/template">
+			<% for(var i in record){ var item=record[i]; %>
+				<li class="mui-table-view-cell" id="huancunLi" data-flot= "<%=(item)%>">
+					<a class="mui-navigate-right"><%=(item)%></a>
+				</li>
+			<% } %>
+		</script>
+		</div>
+
+		<script type="text/javascript" charset="utf-8">
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {//下拉刷新
+						auto:true,//可选,默认false.自动下拉刷新一次
+						contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: pulldownRefresh
+					}, 
+					up: {//上拉加载
+						//auto:true,//可选,默认false.自动上拉加载一次
+						contentrefresh: '正在加载...',
+						contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+						callback: pullupRefresh
+					}
+				}
+			});
+			var urlId = '';var stat='';
+			mui.plusReady(function() {
+				urlId= plus.webview.currentWebview().urlId;
+				stat = plus.webview.currentWebview().stat;
+				
+				//var record = [{flot_no: '121212'},{flot_no: '4'}];
+				//将数据绑定到界面上
+				getData(1,1,plus.webview.currentWebview().flot);
+				//查询
+				document.getElementById('searchBtn').addEventListener('tap', function(event) {
+					//备注不能为空
+					var keyword = document.getElementById('keyword').value;
+					if (keyword == '') {
+						mui.toast('请先填写批次号')
+						return;
+					}
+					getData(1,1,keyword);
+				});
+				//选中批次号
+				//删除
+				mui("#list").on("tap", "li", function(event) {
+					var i = this.getAttribute('data-flot');
+					var view = plus.webview.currentWebview().opener();
+					mui.fire(view,'changeFlot',{
+						flot:i
+					});
+					mui.back()
+				})
+			})
+			var count = 1;
+			function pulldownRefresh(){
+				  count=1;//第一页
+				  type=1;//代表下拉刷新
+				  getData(count,type,document.getElementById('keyword').value);//具体取数据的方法
+			}
+			function pullupRefresh(){
+				//setTimeout(function() {
+				count++;//翻下一页
+				type=2;//代表上拉加载
+				getData(count,type,document.getElementById('keyword').value);//具体取数据的方法
+			//}, 100);
+			}
+			function getData(page,type,flot){
+				aj.post(urlId, {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							flot:flot,
+							stat:stat,
+							page:page
+						}, function (data) {
+					if (data.result) {
+						/* document.getElementById('list').innerHTML = template('ui-template', {
+							"record": data.data
+						}); */
+						if(type==2){//下拉加载
+							if(data.data.length > 0){
+								var html = '';
+								if(page != 1){
+									html = document.getElementById("list").innerHTML;
+								}
+								document.getElementById('list').innerHTML = template('ui-template', {
+									"record": data.data
+								});
+								
+							}
+							mui('#pullrefresh').pullRefresh().endPulldownToRefresh();//结束下拉刷新
+							 /*结束上拉加载，并根据情况切换“下拉显示更多数据”，以及“没有更多数据了”。执行endPullupToRefresh()方法，结束转雪花进度条的“正在加载...”过程,若还有更多数据，则传入false; 否则传入true，之后滚动条滚动到底时*/
+							 if(data.data.length > 0){
+								 mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+							 } else {
+								 mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+							 }
+						}
+						if(type==1){//上拉刷新
+							  /*下面这句很关键！*/
+							  mui('#pullrefresh').pullRefresh().refresh(true);//有重新触发上拉加载的需求（比如当前类别已无更多数据，但切换到另外一个类别后，应支持继续上拉加载）
+							  //vm.companylist = data.company_list;
+							  //plus.nativeUI.closeWaiting();//数据渲染完毕，关闭加载框
+							  mui.currentWebview.show(); //显示当前页面
+							  var html = '';
+							  //console.log(page != 1)
+							  if(page != 1){
+								  html = document.getElementById("list").innerHTML;
+							  }
+							document.getElementById('list').innerHTML = template('ui-template', {
+								"record": data.data
+							});
+						 }
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

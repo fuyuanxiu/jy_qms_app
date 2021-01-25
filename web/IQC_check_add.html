@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<style type="text/css">
+			.mui-content {
+				margin-top: 2px;
+			}
+			.mui-content input{
+				text-align:left
+			}
+			/** 自定义文字*/
+			.mui-switch {
+				width: 120px;
+			}
+			.mui-switch.mui-active .mui-switch-handle {
+				transform: translate(88px, 0px);
+			}
+			.mui-switch:before {
+				content: '不合格';
+				color: #999;
+			}
+			.mui-switch.mui-active:before {
+				content: '合格';
+				color: #fff;
+			}
+			.acss a{
+				text-align: center;
+				color: #fff;
+				text-decoration: none;
+				background-color: rgb(255, 145, 0);
+			}
+			.search {
+				border: 1px solid #e0e0e0;
+				border-radius: 5px;
+				display: flex;
+				width: 100%;
+				align-items: center;
+				margin-top: 10px;
+				/* padding:0px 10px 0;*/
+				background-color: rgba(255, 255, 255, 1);
+				padding-left: 10px;
+				margin-bottom: 10px;
+				height: 40px;
+			}
+			
+			.search input {
+				margin-bottom: 2px;
+				padding: 0px 0px;
+				--background: none;
+				border-radius: 5px;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">IQC检验项目录入<span class="mui-badge mui-badge-primary" id='num'>0</span></h1>
+		</header>
+		<div class="mui-content" id="divid">
+		</div>
+
+		<script id='row-template' type="text/template">
+						<% for(var i in record){ var item=record[i]; %>
+						<form class="mui-input-group" >
+						<div class="mui-input-row">
+						    <label>检验值<%=(++i)%></label>
+							<%if(item.FCHECK_VALUES=='合格'){%>
+							<div class="mui-switch mui-active" id="<%=(item.ID)%>">
+							  <div class="mui-switch-handle"></div>
+							</div>
+							<%}else{%>
+							  <div class="mui-switch " id="<%=(item.ID)%>">
+							    <div class="mui-switch-handle"></div>
+							  </div>
+							<%}%>
+						</div>
+						<div class="mui-input-row">
+						    <label>有效期(月)<%=(i)%></label>
+							<div data-id="<%=(item.ID)%>" class="mui-numbox" data-numbox-step='1' style="width: 50%;" >
+							  <button  data-id="<%=(item.ID)%>" class="mui-btn mui-numbox-btn-minus" type="button">-</button>
+							  <input data-id="<%=(item.ID)%>" class="mui-input-numbox" type="number" value="<%=(item.FORDER)%>"/>
+							  <button  data-id="<%=(item.ID)%>" class="mui-btn mui-numbox-btn-plus" type="button">+</button>
+							</div>
+						</div>
+						<div class="search">
+							<label style="width: 6.25rem;">备注<%=(i)%></label>
+							<input type="search" class="mui-input-clear" placeholder="请输入备注" id="values" value="<%=(item.MEMO)%>">
+							<button  data-id="<%=(item.ID)%>" type="button" class="mui-btn submit mui-btn-green mui-icon mui-icon-checkmarkempty" >确认</button>
+						</div>
+						</form>
+						<% } %>
+						
+				</script>
+		</div>
+
+		<script type="text/javascript" charset="utf-8">
+			mui.init({
+                    beforeback: function() {　　　　
+                        var list = plus.webview.currentWebview().opener();　　　　
+                        mui.fire(list, 'refresh');//refresh是A页面自定义事件
+                        return true; //返回true,继续页面关闭逻辑
+                    }
+                });
+			var num=0;
+			mui.plusReady(function() {
+				//alert(GetQueryString('did'));
+				num = GetQueryString('num');
+				document.getElementById("num").innerHTML = num;
+				//将数据绑定到界面上
+				aj.post("/iqc/getCheckResult", {
+							did: GetQueryString('did')
+						}, function (data) { 
+							console.log(JSON.stringify(data))
+					if (data.result) {
+						document.getElementById('divid').innerHTML = template('row-template', {
+							"record": data.data.DA
+						});
+						
+						mui('.mui-switch')['switch'](); //手动初始化
+						mui('.mui-numbox').numbox();
+						
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+				mui("#divid").on("tap", ".mui-switch", function(event) {
+					var id = this.getAttribute('id');
+					//plus.ui.toast(id);
+					var eTarget = event.target; //mui-switch
+					var va = '不合格'; //不合格
+					if (eTarget.className.indexOf('mui-active') != -1) {
+						va = '合格'; //合格
+					}
+					saveValues(va,id);
+				})
+				
+				 mui('#divid').on('change',"input[type='number']",function(e){
+					 console.log(this.getAttribute('data-id'));
+					 console.log(this.value)
+					 doSaveByFiel(this.getAttribute('data-id'),this.value,this)
+                  })
+				//输入法软键盘的搜索
+				
+				mui("#divid").on("tap", ".mui-numbox button", function(event) {
+					var id = this.getAttribute('data-id');
+					//plus.ui.toast(id);
+					//var qty = this.parentNode.parentNode.querySelectorAll(".mui-input-numbox")[0].value;
+					console.log(this.parentNode.querySelectorAll(".mui-input-numbox")[0].value)
+					//数字加减
+					doSaveByFiel(id,this.parentNode.querySelectorAll(".mui-input-numbox")[0].value,this)
+				})
+				function doSaveByFiel(id,value,elem){
+					aj.post("/iqc/doSaveByFiel", {
+								factory: api_localStorageGet("factory"),
+								company: api_localStorageGet("company"),
+								username:api_localStorageGet("code"),
+								pid: id,
+								fielName:"FORDER",
+								fielValue:value
+							}, function (data) {
+						if (data.result) {
+							plus.ui.toast('保存成功!')
+							elem.parentNode.parentNode.parentNode.querySelectorAll(".mui-input-clear")[0].value = data.data
+						} else {
+							plus.ui.toast(data.msg);
+						}
+					});
+				}
+				
+				mui('#divid').on('tap', '.search button', function(event) {
+						var id = this.getAttribute('data-id');
+						var memo = this.parentNode.querySelectorAll(".mui-input-clear")[0].value;
+						
+						if(memo.length == 0){
+							plus.ui.toast('备注不能为空!');
+							return false;
+						}
+						aj.post("/iqc/addCheckMemo", {
+									factory: api_localStorageGet("factory"),
+									company: api_localStorageGet("company"),
+									username:api_localStorageGet("code"),
+									pid: GetQueryString('mid'),
+									itemid:GetQueryString('did'),
+									valueid:id,
+									memo:memo
+								}, function (data) {
+							if (data.result) {
+								plus.ui.toast('保存成功!')
+							} else {
+								plus.ui.toast(data.msg);
+							}
+						});	
+				});
+
+			});
+			//保存检验结果
+			function saveValues(values,id1) {
+				aj.post("/iqc/addCheckResult", {
+							factory: api_localStorageGet("factory"),
+							company: api_localStorageGet("company"),
+							did:GetQueryString('did'),
+							mid:GetQueryString('mid'),
+							username:api_localStorageGet("code"),
+							type:'1',
+							values:values,
+							valid:id1
+						}, function (data) {
+					if (data.result) {
+						plus.ui.toast('修改成功!');
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+				/*mui.ajax(API.webPath + '/iqc/addCheckResult?did=' + GetQueryString('did') + '&mid=' + GetQueryString('mid') +
+					'&company='+api_localStorageGet("company")+'&factory='+api_localStorageGet("factory")+'&username='+api_localStorageGet("code")+'&type=1&values=' +values+
+					'&valid=' + id1, {
+						data: {},
+						dataType: 'json',
+						type: 'POST',
+						timeout: 50000,
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						success: function(data) {
+							if (data.result) {
+								plus.ui.toast('修改成功!');
+							} else {
+								plus.ui.toast(data.msg);
+							}
+						},
+						error: function(xhr, type, errorThrown) {
+							plus.ui.toast('获取批次号失败!失败类型是:' + type);
+						}
+					}); */
+			}
+		</script>
+	</body>
+</html>

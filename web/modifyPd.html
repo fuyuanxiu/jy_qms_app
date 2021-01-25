@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/api.js"></script>
+		<script src="../js/template-web.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css" />
+		<style type="text/css">
+			body {}
+			.mui-content {
+				margin-top: 2px;
+			}
+
+			.mui-btn {
+				width: 80px;
+			}
+			.btn{
+				width:100%;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">修改密码</h1>
+		</header>
+		<div class="mui-content" id="divid">
+			<form class="mui-input-group">
+				<div class="mui-input-row cell">
+					<label>旧密码</label>
+					<input type="password" class="mui-input-password" placeholder="请输入密码" id="old" >
+				</div>
+				<div class="mui-input-row cell">
+					<label>新密码</label>
+					<input type="password" class="mui-input-password" placeholder="请输入密码" id="newp" >
+				</div>
+				<div class="mui-input-row">
+					<label>确认密码</label>
+					<input type="password" class="mui-input-password" placeholder="请输入再次输入密码" id="newsp">
+				</div>
+			</form>
+			<!-- 注意：登录按钮不能和账号密码输入框放在一个form里面 -->
+			<div class="mui-content-padded" align="center">
+				<button type="button" class="mui-btn mui-btn-blue btn" id="subBtn">提交修改</button> 
+			</div>
+		</div>
+
+		<script type="text/javascript" charset="utf-8">
+			mui.init({
+	                    beforeback: function() {　　　　
+	                        var list = plus.webview.currentWebview().opener();　　　　
+	                        mui.fire(list, 'refresh');//refresh是A页面自定义事件
+	                        return true; //返回true,继续页面关闭逻辑
+	                    }
+	                });
+			mui.plusReady(function() {
+				//点击提交
+				document.getElementById("subBtn").addEventListener('tap',function(){
+					saveValues();
+				})
+			});
+			//保存检验结果
+			function saveValues() {
+				var old = document.getElementById("old");
+				var newp = document.getElementById("newp");
+				var newsp = document.getElementById("newsp");
+				if (old.value.length == 0) {
+					plus.ui.toast("旧密码不能为空");
+					return;
+				}
+				if (newp.value.length == 0) {
+					plus.ui.toast("新密码不能为空");
+					return;
+				}
+				if (newsp.value.length == 0) {
+					plus.ui.toast("确认密码不能为空");
+					return;
+				}
+				if(newp.value != newsp.value){
+					plus.ui.toast("两次输入的密码不一致");
+					return;
+				}
+				aj.post("/changPsw", {
+							usercode: api_localStorageGet("code"),
+							oldp: old.value,
+							newp:newp.value
+						}, function (data) {
+					if (data.result) {
+						plus.ui.toast('修改成功!');
+					} else {
+						plus.ui.toast(data.msg);
+					}
+				});
+				/* mui.ajax(API.webPath + '/changPsw?usercode='+api_localStorageGet("code")+'&oldp=' +old.value+'&newp=' +newp.value, {
+						data: {},
+						dataType: 'json',
+						type: 'POST',
+						timeout: 50000,
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						success: function(data) {
+							if (data.result) {
+								plus.ui.toast('修改成功!');
+							} else {
+								plus.ui.toast(data.msg);
+							}
+						},
+						error: function(xhr, type, errorThrown) {
+							plus.ui.toast('获取数据失败!失败类型是:' + type);
+						}
+					}); */
+			}
+		</script>
+	</body>
+</html>
