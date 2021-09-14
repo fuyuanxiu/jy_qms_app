@@ -1,9 +1,12 @@
 
 var API = window.API = {
-    //webPath			: "http://192.168.0.100:9999/",
+    /*//webPath			: "http://192.168.0.100:9999/",
 	webPathWai			: "http://113.106.220.62:9999/jyapp/",
     //webPath			: "http://192.168.7.242:9999/jyapp/",
-	webPath			: "http://pleehr.vicp.io:35572/jyapp/",
+	webPath			: "http://pleehr.vicp.io:35572/jyapp/",*///2021-5-1注释
+	
+	webPath			: "http://192.168.7.241:9999/jyapp/",//内网
+	webPathWai		: "http://113.106.220.62:9999/jyapp/",//外网
 	version         :"test",//demo:静态，prod:正式，test:测试
 	urls: {
 		login		: "anon/login!login.action",
